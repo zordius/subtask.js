@@ -1,13 +1,7 @@
 /*jslint node: true */
 'use strict';
 
-var later = function (F, I) {
-        setTimeout(function () {
-        F(I);
-        }, 1);
-    },
-
-subtask = function (tasks) {
+var subtask = function (tasks) {
     var executed = false,
         count = 0,
         all = 0,
@@ -27,6 +21,11 @@ subtask = function (tasks) {
                 });
             }
         },
+        later = function (F, I) {
+            setTimeout(function () {
+                F(I);
+            }, 1);
+        },
         ender = function () {
             count++;
             if (count == all) {
@@ -35,9 +34,6 @@ subtask = function (tasks) {
                 }
             }
         };
-    if (!this) {
-        return new subtask(tasks);
-    }
 
     this.execute = function (cb) {
         // do nothing when no subtask or input string
@@ -73,4 +69,6 @@ subtask = function (tasks) {
 }
 
 
-module.exports = subtask;
+module.exports = function(tasks) {
+    return new subtask(tasks);
+};
