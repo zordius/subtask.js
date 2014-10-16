@@ -59,6 +59,25 @@ describe('subtask.execute', function () {
             done();
         });
     });
+
+    it('should not run wraped function without .execute', function (done) {
+        var D = 0;
+        ST(function (cb) {
+            D = 1;
+            cb(2);
+        });
+        setTimeout(done, 100);
+    });
+
+    it('should be chainable', function (done) {
+        var D = 0;
+        ST(2).execute(function () {
+            D++;
+        }).execute(function () {
+            assert.equal(1, D);
+            done();
+        });
+    });
     it('should handle subtask', function (done) {
         ST({a: 1, b: 0, c: ST(3)}).execute(function (D) {
             assert.deepEqual({a: 1, b: 0, c: 3}, D);

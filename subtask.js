@@ -76,6 +76,8 @@ var subtask = function (tasks) {
         if (all == 0) {
             callbacks.pop()(tasks);
         }
+
+        return this;
     }
 }
 
