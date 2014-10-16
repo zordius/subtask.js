@@ -1,0 +1,64 @@
+/*jslint node: true */
+'use strict';
+
+var subtask = function (tasks) {
+    var executed = false,
+        count = 0,
+        all = 0,
+        result = {},
+        callbacks = [],
+        I,
+        runner = function (index, task) {
+            try {
+                task.execute(function (D) {
+                    result[index] = D;
+                    ender();
+                });
+            } catch (E) {
+                result[index] = undefined;
+                ender();
+            }
+        },
+        ender = function () {
+            count++;
+            if (count == all) {
+                while (callbacks.length) {
+                    try {
+                        callbacks.pop()(result);
+                    } catch (E) {
+                    }
+                }
+            }
+        };
+
+    this.execute = function (cb) {
+        // do nothing when no subtask
+        if (!tasks) {
+            cb(tasks);
+            return;
+        }
+
+        // executed, return cached result
+        if (executed) {
+            cb(result);
+            return;
+        }
+
+        // wait for result
+        callbacks.push(cb);
+
+        // started, not again
+        if (all) {
+            return;
+        }
+
+        // execute
+        for (I in tasks) {
+            all++;
+            runner(I, tasks[I]);
+        }
+    }
+}
+
+
+module.exports = subtask;
