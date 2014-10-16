@@ -3,6 +3,7 @@
 
 var subtask = function (tasks) {
     var executed = false,
+        type = (typeof tasks),
         count = 0,
         all = 0,
         result = {},
@@ -29,6 +30,7 @@ var subtask = function (tasks) {
         ender = function () {
             count++;
             if (count == all) {
+                executed = true;
                 while (callbacks.length) {
                     later(callbacks.pop(), result);
                 }
@@ -37,7 +39,7 @@ var subtask = function (tasks) {
 
     this.execute = function (cb) {
         // do nothing when no subtask or input string
-        if (!tasks || ('string' == (typeof tasks))) {
+        if (!tasks || ('string' == type)) {
             cb(tasks);
             return;
         }
@@ -45,6 +47,15 @@ var subtask = function (tasks) {
         // executed, return cached result
         if (executed) {
             cb(result);
+            return;
+        }
+
+        // wrap a function
+        if ('function' == type) {
+            tasks(function (D) {
+                result = D;
+                cb(result);
+            });
             return;
         }
 
