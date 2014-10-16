@@ -43,4 +43,11 @@ describe('subtask.execute', function () {
             done();
         });
     });
+
+    it('should return original hash', function (done) {
+        (new ST({a: 1, b: 0})).execute(function (D) {
+            assert.deepEqual({a: 1, b: 0}, D);
+            done();
+        });
+    });
 });

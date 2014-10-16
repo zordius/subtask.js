@@ -16,7 +16,7 @@ var subtask = function (tasks) {
                 });
             } catch (E) {
                 later(function () {
-                    result[index] = undefined;
+                    result[index] = ('function' == (typeof task)) ? undefined : task;
                     ender();
                 });
             }
