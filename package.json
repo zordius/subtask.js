@@ -21,7 +21,7 @@
   "dependencies": {
   },
   "scripts": {
-    "coverage": "istanbul cover -- _mocha -R spec",
+    "coverage": "istanbul cover -- _mocha",
     "lint": "jshint api-validator.js",
     "test": "mocha"
   },
