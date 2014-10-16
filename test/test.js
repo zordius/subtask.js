@@ -13,6 +13,11 @@ describe('subtask', function () {
         assert.equal('function', typeof (new ST()).execute);
         done();
     });
+
+    it('should auto create instance without new', function (done) {
+        assert.equal('function', typeof ST().execute);
+        done();
+    });
 });
 
 describe('subtask.execute', function () {
@@ -50,4 +55,6 @@ describe('subtask.execute', function () {
             done();
         });
     });
+
+    //it('should 
 });

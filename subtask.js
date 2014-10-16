@@ -1,7 +1,13 @@
 /*jslint node: true */
 'use strict';
 
-var subtask = function (tasks) {
+var later = function (F, I) {
+        setTimeout(function () {
+        F(I);
+        }, 1);
+    },
+
+subtask = function (tasks) {
     var executed = false,
         count = 0,
         all = 0,
@@ -28,12 +34,10 @@ var subtask = function (tasks) {
                     later(callbacks.pop(), result);
                 }
             }
-        },
-        later = function (F, I) {
-            setTimeout(function () {
-                F(I);
-            }, 1);
         };
+    if (!this) {
+        return new subtask(tasks);
+    }
 
     this.execute = function (cb) {
         // do nothing when no subtask or input string
