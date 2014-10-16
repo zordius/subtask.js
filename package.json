@@ -23,7 +23,7 @@
   "scripts": {
     "coverage": "istanbul cover -- _mocha -R spec",
     "lint": "jshint api-validator.js",
-    "test": "mocha -R spec"
+    "test": "mocha"
   },
   "main": "./subtask.js",
   "devDependencies": {
@@ -32,9 +32,7 @@
     "mocha": "*"
   },
   "optionalDependencies": {
-    "browserify": "*",
-    "jshint": "*",
-    "uglify-js": "*"
+    "jshint": "*"
   },
   "engines": {
     "node": ">=0.6"
