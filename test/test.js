@@ -8,4 +8,9 @@ describe('subtask', function () {
         assert('function', typeof ST);
         done();
     });
+
+    it('should be an instance with execute()', function (done) {
+        assert('function', typeof (new ST()).execute);
+        done();
+    });
 });
