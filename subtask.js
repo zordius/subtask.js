@@ -15,25 +15,29 @@ var subtask = function (tasks) {
                     ender();
                 });
             } catch (E) {
-                result[index] = undefined;
-                ender();
+                later(function () {
+                    result[index] = undefined;
+                    ender();
+                });
             }
         },
         ender = function () {
             count++;
             if (count == all) {
                 while (callbacks.length) {
-                    try {
-                        callbacks.pop()(result);
-                    } catch (E) {
-                    }
+                    later(callbacks.pop(), result);
                 }
             }
+        },
+        later = function (F, I) {
+            setTimeout(function () {
+                F(I);
+            }, 1);
         };
 
     this.execute = function (cb) {
-        // do nothing when no subtask
-        if (!tasks) {
+        // do nothing when no subtask or input string
+        if (!tasks || ('string' == (typeof tasks))) {
             cb(tasks);
             return;
         }
@@ -56,6 +60,10 @@ var subtask = function (tasks) {
         for (I in tasks) {
             all++;
             runner(I, tasks[I]);
+        }
+
+        if (all == 0) {
+            callbacks.pop()(tasks);
         }
     }
 }
