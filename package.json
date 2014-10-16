@@ -1,0 +1,51 @@
+{
+  "name": "subtask",
+  "version": "0.0.1",
+  "description": "A JavaScript class and design pattern to make async tasks clear and simple.",
+  "author": "Zordius <zordius@yahoo-inc.com>",
+  "contributors": [
+    {
+      "name": "Zordius Chen",
+      "email": "zordius@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zordius/subtask.js.git"
+  },
+  "keywords": [
+    "async",
+    "task",
+    "promise"
+  ],
+  "dependencies": {
+  },
+  "scripts": {
+    "coverage": "istanbul cover -- _mocha -R spec",
+    "lint": "jshint api-validator.js",
+    "test": "mocha -R spec"
+  },
+  "main": "./subtask.js",
+  "devDependencies": {
+    "chai": "*",
+    "istanbul": "*",
+    "mocha": "*"
+  },
+  "optionalDependencies": {
+    "browserify": "*",
+    "jshint": "*",
+    "uglify-js": "*"
+  },
+  "engines": {
+    "node": ">=0.6"
+  },
+  "bugs": {
+    "url": "https://github.com/zordius/subtask.js/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/zordius/subtask.js/blob/master/LICENSE.txt"
+    }
+  ]
+}
