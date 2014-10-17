@@ -267,13 +267,24 @@ describe('subtask.pipe', function () {
     });
 
     describe('subtask.transform', function () {
-        it('should transformed task result by the function', function (done) {
+        it('should transform task result by the function', function (done) {
             queueTask(1)
             .pipe(jobOne)
             .transform(function (R) {
                 return R * R;
             }).execute(function (D) {
                 assert.equal(100, D);
+                done();
+            });
+        });
+
+        it('should transform first then pipe', function (done) {
+            queueTask(1)
+            .transform(function (R) {
+                return R * R;
+            }).pipe(jobOne)
+            .execute(function (D) {
+                assert.equal(50, D);
                 done();
             });
         });
