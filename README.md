@@ -67,7 +67,7 @@ var someModule = function (req) {
 });
 ```
 
-* ISSUE 1: many small pieces of code to similar tasks for input.
+* ISSUE 1: many small pieces of code do similar tasks for input.
 * ISSUE 2: the real life of a page is async.
 
 **Everything should be async**
@@ -154,11 +154,11 @@ var somePage = function (CX) {
     });
 ```
 
-Stop! R[0] to R[n] is bad! And, why we get the story two times? (one for the page title, another one for the story module) . Maybe we should reuse the fetched data and store it.
+Stop! R[0] to R[n] are bad! And, why we get the story two times? (one for the page title, another one for the story module) . Maybe we should reuse the fetched data and store it.
 
 **Namespace**
 
-We can store data in context CX, and define good namespace rule. And we make a framework to handle modules and page. Now the code seens better.
+We can store data in the context `CX`, and define good namespace rule. And we make a framework to handle modules and page. Now the code seens better:
 
 ```javascript
 framework.defindPage('somePage', function (CX) {
@@ -177,8 +177,8 @@ framework.defindPage('somePage', function (CX) {
 
 Namespace rule is hard to maintain:
 
-* CX.data.stories: a list of stories. good for a page.
-* CX.data.user.name: user name. good for a page.
-* CX.module.story: story module....what happened when I put 2 story module in 1 page?!!!
+* CX.data.stories: a list of stories. good for all pages.
+* CX.data.user.name: user name. good for all pages.
+* CX.module.story: story module....what happened when I put 2 story modules in 1 page?!!!
 
-Yes we do not believe all developers in the team remember all naming rules.
+We do not believe all developers in the team remember all naming rules.
