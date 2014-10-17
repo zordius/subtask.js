@@ -291,6 +291,23 @@ describe('subtask.pipe', function () {
     });
 });
 
+describe('subtask.pick', function () {
+    it('should get result by path', function (done) {
+        ST({
+            a: {
+                b: 'no',
+                c: 'OK!'
+            },
+            'a.c': 'no'
+        })
+        .pick('a.c')
+        .execute(function (D) {
+            assert.equal('OK!', D);
+            done();
+        });
+    });
+});
+
 describe('example: task input validation', function () {
     var getProductByIdTask = function(id) {
             if (!id) {
