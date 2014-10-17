@@ -4,7 +4,6 @@
 var subtask = function (tasks) {
     var executed = false,
         type = (typeof tasks),
-        istask = (tasks instanceof subtask),
         count = 0,
         all = 0,
         result = {},
@@ -61,16 +60,6 @@ var subtask = function (tasks) {
             return this;
         }
 
-        // wrap subtask
-        if (istask) {
-            tasks.execute(function (D) {
-                result = D;
-                executed = true;
-                cb(result);
-            });
-            return this;
-        }
-
         // wait for result
         callbacks.push(cb);
 
@@ -91,9 +80,27 @@ var subtask = function (tasks) {
 
         return this;
     }
-}
+},
 
-
-module.exports = function(tasks) {
+SUBTASK = function(tasks) {
     return new subtask(tasks);
 };
+
+SUBTASK.isSubtask = function (O) {
+    return O instanceof subtask;
+};
+
+subtask.prototype = {
+    next: function (task) {
+        var T = this;
+        return SUBTASK(function (cb) {
+            T.execute(function () {
+                task.apply(task, arguments).execute(function (D) {
+                    cb(D);
+                })
+            });
+        });
+    }
+};
+
+module.exports = SUBTASK;

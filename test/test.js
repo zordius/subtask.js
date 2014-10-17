@@ -13,6 +13,13 @@ describe('subtask', function () {
         assert.equal('function', typeof ST().execute);
         done();
     });
+
+    it('.isSubtask should return true/false', function (done) {
+        assert.equal(true, ST.isSubtask(ST(1)));
+        assert.equal(false, ST.isSubtask(3));
+        assert.equal(false, ST.isSubtask(function () {}));
+        done();
+    });
 });
 
 describe('subtask.execute', function () {
@@ -72,33 +79,6 @@ describe('subtask.execute', function () {
         }, 100);
     });
 
-    it('should wrap subtask', function (done) {
-        var plus = function (n) {
-            return ST(n * 2);
-        };
-
-        ST(plus(4)).execute(function (D) {
-            assert.equal(8, D);
-            done();
-        });
-    });
-
-    it('should not run wraped subtask without .execute', function (done) {
-        var D = 0,
-            plus = function (n) {
-                return ST(function (cb) {
-                    cb(D++);
-                });
-            };
-
-        ST(plus(4));
-
-        setTimeout(function () {
-            assert.equal(0, D);
-            done();
-        }, 100);
-    });
-
     it('should be chainable', function (done) {
         var D = 0;
         ST(2).execute(function () {
@@ -119,23 +99,6 @@ describe('subtask.execute', function () {
         }).execute(function (R) {
             assert.equal(1, D);
             assert.equal(1, R);
-            done();
-        });
-    });
-
-    it('should run wraped subtask only 1 time', function (done) {
-        var I = 0,
-            plus = function (n) {
-                I++;
-                return ST(n * 2);
-            };
-
-        ST(plus(4)).execute(function (D) {
-            assert.equal(8, D);
-            assert.equal(1, I);
-        }).execute(function (D) {
-            assert.equal(8, D);
-            assert.equal(1, I);
             done();
         });
     });
@@ -235,9 +198,9 @@ describe('predefined async subtask', function () {
 
 });
 
-describe('predefined pipeline subtask', function () {
+describe('subtask.next', function () {
     var queueTask = function (number) {
-            return jobTwo(jobOne(number));
+            return jobOne(number).next(jobTwo);
         },
 
         jobOne = function (input) {
@@ -247,4 +210,23 @@ describe('predefined pipeline subtask', function () {
         jobTwo = function (input) {
             return ST(input + 3);
         };
+
+    it('should return a subtask', function (done) {
+        assert.equal(true, ST.isSubtask(ST(3).next()));
+        done();
+    });
+
+    it('should be executed ordered', function (done) {
+        queueTask(4).execute(function (D) {
+            assert.equal(11, D);
+            done();
+        });
+    });
+
+    it('should be executed with different input', function (done) {
+        queueTask(1).execute(function (D) {
+            assert.equal(5, D);
+            done();
+        });
+    });
 });
