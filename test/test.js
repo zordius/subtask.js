@@ -363,9 +363,10 @@ describe('example: task input validation', function () {
         });
 
         it('task: get 3rd searched product, not valid', function (done) {
-            searchProductsTasks('test').pipe(getProductByIdTask, function (R) {
-                return R.list[2];
-            }).execute(function (D) {
+            searchProductsTasks('test')
+            .pick('list.2')
+            .pipe(getProductByIdTask)
+            .execute(function (D) {
                 assert.deepEqual(undefined, D);
                 done();
             });
