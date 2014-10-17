@@ -72,6 +72,33 @@ describe('subtask.execute', function () {
         }, 100);
     });
 
+    it('should wrap subtask', function (done) {
+        var plus = function (n) {
+            return ST(n * 2);
+        };
+
+        ST(plus(4)).execute(function (D) {
+            assert.equal(8, D);
+            done();
+        });
+    });
+
+    it('should not run wraped subtask without .execute', function (done) {
+        var D = 0,
+            plus = function (n) {
+                return ST(function (cb) {
+                    cb(D++);
+                });
+            };
+
+        ST(plus(4));
+
+        setTimeout(function () {
+            assert.equal(0, D);
+            done();
+        }, 100);
+    });
+
     it('should be chainable', function (done) {
         var D = 0;
         ST(2).execute(function () {
@@ -91,12 +118,29 @@ describe('subtask.execute', function () {
             assert.equal(1, D);
         }).execute(function (R) {
             assert.equal(1, D);
-            //assert.equal(1, R);
+            assert.equal(1, R);
             done();
         });
     });
 
-    it('should handle subtask', function (done) {
+    it('should run wraped subtask only 1 time', function (done) {
+        var I = 0,
+            plus = function (n) {
+                I++;
+                return ST(n * 2);
+            };
+
+        ST(plus(4)).execute(function (D) {
+            assert.equal(8, D);
+            assert.equal(1, I);
+        }).execute(function (D) {
+            assert.equal(8, D);
+            assert.equal(1, I);
+            done();
+        });
+    });
+
+    it('should handle hashed subtask', function (done) {
         ST({a: 1, b: 0, c: ST(3)}).execute(function (D) {
             assert.deepEqual({a: 1, b: 0, c: 3}, D);
             done();
@@ -192,4 +236,15 @@ describe('predefined async subtask', function () {
 });
 
 describe('predefined pipeline subtask', function () {
+    var queueTask = function (number) {
+            return jobTwo(jobOne(number));
+        },
+
+        jobOne = function (input) {
+            return ST(input * 2);
+        },
+
+        jobTwo = function (input) {
+            return ST(input + 3);
+        };
 });

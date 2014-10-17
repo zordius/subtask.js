@@ -4,6 +4,7 @@
 var subtask = function (tasks) {
     var executed = false,
         type = (typeof tasks),
+        istask = (tasks instanceof subtask),
         count = 0,
         all = 0,
         result = {},
@@ -53,6 +54,16 @@ var subtask = function (tasks) {
         // wrap a function
         if ('function' == type) {
             tasks(function (D) {
+                result = D;
+                executed = true;
+                cb(result);
+            });
+            return this;
+        }
+
+        // wrap subtask
+        if (istask) {
+            tasks.execute(function (D) {
                 result = D;
                 executed = true;
                 cb(result);
