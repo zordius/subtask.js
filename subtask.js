@@ -109,6 +109,7 @@ subtask.prototype = {
     },
     transform: function (func) {
         var T = this;
+
         return SUBTASK(function (cb) {
             T.execute(function (D) {
                 cb(func(D));

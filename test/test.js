@@ -267,13 +267,13 @@ describe('subtask.pipe', function () {
     });
 
     describe('subtask.transform', function () {
-        it('should transformed input by the callback function', function (done) {
+        it('should transformed task result by the function', function (done) {
             queueTask(1)
             .pipe(jobOne)
             .transform(function (R) {
                 return R * R;
             }).execute(function (D) {
-                assert.equal(50, D);
+                assert.equal(100, D);
                 done();
             });
         });
