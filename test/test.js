@@ -350,9 +350,10 @@ describe('example: task input validation', function () {
             };
 
         it('task: get first searched product', function (done) {
-            searchProductsTasks('test').pipe(getProductByIdTask, function (R) {
-                return R.list[0];
-            }).execute(function (D) {
+            searchProductsTasks('test')
+            .pick('list.0')
+            .pipe(getProductByIdTask)
+            .execute(function (D) {
                 assert.deepEqual({
                     title: 'this is a mocked product',
                     id: 1
