@@ -107,6 +107,22 @@ taskQueue(123).execute(function (D) {
 });
 ```
 
+**Transform then pipe**
+
+* Use .transform() to change the task result or pick wanted value 
+
+```javascript
+task1(123)
+.transform(function (R) {
+    return R * 2;
+})
+.pipe(task2)   // take result * 2 of task1 , send into task2 as input
+.pipe(task3)   // take result of task2 , send into task3
+.execute(function (D) {
+    // now D is result of task3
+});
+```
+
 The Long Story
 --------------
 
