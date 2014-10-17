@@ -15,10 +15,11 @@ Features
 
 **Why not..**
 
-* Why not promise? Because we want to handle all success + failed cases in same place, promise.then() like 2 callbacks.
 * Why not async.series? Because we need to handle task output as another task input, it make callback functions access variables in another scope and mess up everything.
 * Why not async.parallel? Because we like to put results with semantic naming under an object.
-* Why not extend async.\* ? 
+* Why not extend async.\* ? Because we like all tasks can be defined and be executed in the same way... we need something like promise.
+* Why not promise? Because we want to handle all success + failed cases in same place, promise.then() like 2 callbacks.
+* Why not extend promise? Because the requirement is different, and we do not want to confuse developers.
 
 How to Use
 ----------
