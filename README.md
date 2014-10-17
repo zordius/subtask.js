@@ -13,6 +13,13 @@ Features
 * cached the result naturally
 * singleton (todo)
 
+**Why not..**
+
+* Why not promise? Because we want to handle all success + failed cases in same place, promise.then() like 2 callbacks.
+* Why not async.series? Because we need to handle task output as another task input, it make callback functions access variables in another scope and mess up everything.
+* Why not async.parallel? Because we like to put results with semantic naming under an object.
+* Why not extend async.\* ? 
+
 How to Use
 ----------
 
@@ -85,7 +92,7 @@ mathLogic(9, 8).execute(function (R) {
 
 **Pipe the tasks**
 
-* Use the result of a task as input of next task.
+* Use the result of a task as input of next task
 
 ```javascript
 var taskQueue = function (input) {
