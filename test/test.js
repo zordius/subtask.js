@@ -231,5 +231,32 @@ describe('subtask.pipe', function () {
     });
 
     it('should not execute piped tasks without .execute', function (done) {
+        var I = 0;
+        queueTask(3).pipe(function (cb) {
+            I++;
+            cb(D + I);
+        });
+
+        setTimeout(function () {
+            assert.equal(0, I);
+            done();
+        }, 100);
+    });
+
+    it('should executed only 1 time', function (done) {
+        var I = 0;
+        queueTask(1).pipe(function (D) {
+            return ST(function (cb) {
+                I++;
+                cb(D + I);
+            });
+        }).execute(function (D) {
+            assert.equal(6, D);
+            assert.equal(1, I);
+        }).execute(function (D) {
+            assert.equal(6, D);
+            assert.equal(1, I);
+            done();
+        });
     });
 });
