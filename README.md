@@ -18,6 +18,10 @@ How to Use
 
 **Define task**
 
+* A task can be created by input param.
+* After it be created, the final result should be always same.
+* Therefore, task should only be executed one time and keep result.
+
 ```javascript
 var task = require('subtask'),
 
@@ -38,7 +42,7 @@ plus = function (a, b) {
 
 **Execute task**
 
-Same async interface for all tasks.
+* Same async interface for all tasks
 
 ```javascript
 multiply(3, 5).execute(function (R) {
@@ -47,6 +51,17 @@ multiply(3, 5).execute(function (R) {
 
 plus(4, 6).execute(function (R) {
     console.log('4 + 6 = ' + R);
+});
+```
+
+* .execute() can be chained
+* Task result is cached naturally
+
+```javascript
+plus(3, 5).execute(function (R) {
+    console.log('3 * 5 = ' + R);
+}).execute(function (R) {
+    console.log('3 * 5 still = ' + R + ', mathApi.plus only be executed once');
 });
 ```
 
