@@ -16,7 +16,8 @@ Features
 How to Use
 ----------
 
-**Define a task**
+**Define task**
+
 ```javascript
 var task = require('subtask'),
 
@@ -33,6 +34,20 @@ plus = function (a, b) {
         });
     });
 };
+```
+
+**Execute task**
+
+Same async interface for all tasks.
+
+```javascript
+multiply(3, 5).execute(function (R) {
+    console.log('3 * 5 = ' + R);
+});
+
+plus(4, 6).execute(function (R) {
+    console.log('4 + 6 = ' + R);
+});
 ```
 
 The Long Story
