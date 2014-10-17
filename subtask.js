@@ -17,7 +17,7 @@ var jpp = require('json-path-processor'),
                 });
             } catch (E) {
                 later(function () {
-                    result[index] = ('function' == (typeof task)) ? undefined : task;
+                    result[index] = ('function' === (typeof task)) ? undefined : task;
                     ender();
                 });
             }
@@ -28,13 +28,13 @@ var jpp = require('json-path-processor'),
             }, 1);
         },
         safelater = function (func, I) {
-            if ('function' == (typeof func)) {
+            if ('function' === (typeof func)) {
                 later(func, I);
             }
         },
         ender = function () {
             count++;
-            if (count == all) {
+            if (count === all) {
                 executed = true;
                 while (callbacks.length) {
                     safelater(callbacks.pop(), result);
@@ -44,7 +44,7 @@ var jpp = require('json-path-processor'),
 
     this.execute = function (cb) {
         // do nothing when no subtask or input string
-        if (!tasks || ('string' == type)) {
+        if (!tasks || ('string' === type)) {
             cb(tasks);
             return this;
         }
@@ -56,7 +56,7 @@ var jpp = require('json-path-processor'),
         }
 
         // wrap a function
-        if ('function' == type) {
+        if ('function' === type) {
             tasks(function (D) {
                 result = D;
                 executed = true;
