@@ -16,7 +16,24 @@ Features
 How to Use
 ----------
 
-todo.....
+**Define a task**
+```javascript
+var task = require('subtask'),
+
+// This is a sync task
+multiply = function (a, b) {
+    return task(a * b);
+};
+
+// This is an async task
+plus = function (a, b) {
+    return task(function (cb) {
+        mathApi.plus(a, b, function (value) {
+            cb(value);
+        });
+    });
+};
+```
 
 The Long Story
 --------------
