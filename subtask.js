@@ -1,7 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-var subtask = function (tasks) {
+var jpp = require('json-path-processor'),
+    subtask = function (tasks) {
     var executed = false,
         type = (typeof tasks),
         count = 0,
@@ -95,13 +96,31 @@ SUBTASK.isSubtask = function (O) {
 };
 
 subtask.prototype = {
-    pipe: function (task, transform) {
+    pipe: function (task) {
+        var T = this;
+
+        return SUBTASK(function (cb) {
+            T.execute(function (D) {
+                task(D).execute(function (R) {
+                    cb(R);
+                });
+            });
+        });
+    },
+    transform: function (func) {
         var T = this;
         return SUBTASK(function (cb) {
-            T.execute(function () {
-                task.apply(task, (transform && transform.apply) ? [transform.apply(null, arguments)] : arguments).execute(function (D) {
-                    cb(D);
-                });
+            T.execute(function (D) {
+                cb(func(D));
+            });
+        });
+    },
+    pick: function (path) {
+        var T = this;
+
+        return SUBTASK(function (cb) {
+            T.execute(function (D) {
+                cb(jpp(D, path));
             });
         });
     }

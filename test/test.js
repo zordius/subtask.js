@@ -266,12 +266,16 @@ describe('subtask.pipe', function () {
         });
     });
 
-    it('should transformed input by the callback function', function (done) {
-        queueTask(1).pipe(jobOne, function (R) {
-            return R * R;
-        }).execute(function (D) {
-            assert.equal(50, D);
-            done();
+    describe('subtask.transform', function () {
+        it('should transformed input by the callback function', function (done) {
+            queueTask(1)
+            .pipe(jobOne)
+            .transform(function (R) {
+                return R * R;
+            }).execute(function (D) {
+                assert.equal(50, D);
+                done();
+            });
         });
     });
 });
