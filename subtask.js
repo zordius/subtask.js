@@ -41,22 +41,23 @@ var subtask = function (tasks) {
         // do nothing when no subtask or input string
         if (!tasks || ('string' == type)) {
             cb(tasks);
-            return;
+            return this;
         }
 
         // executed, return cached result
         if (executed) {
             cb(result);
-            return;
+            return this;
         }
 
         // wrap a function
         if ('function' == type) {
             tasks(function (D) {
                 result = D;
+                executed = true;
                 cb(result);
             });
-            return;
+            return this;
         }
 
         // wait for result
@@ -64,7 +65,7 @@ var subtask = function (tasks) {
 
         // started, not again
         if (all) {
-            return;
+            return this;
         }
 
         // execute

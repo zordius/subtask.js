@@ -66,7 +66,10 @@ describe('subtask.execute', function () {
             D = 1;
             cb(2);
         });
-        setTimeout(done, 100);
+        setTimeout(function () {
+            assert.equal(0, D);
+            done();
+        }, 100);
     });
 
     it('should be chainable', function (done) {
@@ -75,6 +78,20 @@ describe('subtask.execute', function () {
             D++;
         }).execute(function () {
             assert.equal(1, D);
+            done();
+        });
+    });
+
+    it('should run wraped function only 1 time', function (done) {
+        var D = 0;
+        ST(function (cb) {
+            D++;
+            cb(D);
+        }).execute(function () {
+            assert.equal(1, D);
+        }).execute(function (R) {
+            assert.equal(1, D);
+            //assert.equal(1, R);
             done();
         });
     });
