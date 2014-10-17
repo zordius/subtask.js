@@ -8,7 +8,6 @@ var subtask = function (tasks) {
         all = 0,
         result = {},
         callbacks = [],
-        I,
         runner = function (index, task) {
             try {
                 task.execute(function (D) {
@@ -22,9 +21,9 @@ var subtask = function (tasks) {
                 });
             }
         },
-        later = function (F, I) {
+        later = function (func, I) {
             setTimeout(function () {
-                F(I);
+                func(I);
             }, 1);
         },
         ender = function () {
@@ -69,17 +68,17 @@ var subtask = function (tasks) {
         }
 
         // execute
-        for (I in tasks) {
+        for (var I in tasks) {
             all++;
             runner(I, tasks[I]);
         }
 
-        if (all == 0) {
+        if (all === 0) {
             callbacks.pop()(tasks);
         }
 
         return this;
-    }
+    };
 },
 
 SUBTASK = function(tasks) {
@@ -97,7 +96,7 @@ subtask.prototype = {
             T.execute(function () {
                 task.apply(task, arguments).execute(function (D) {
                     cb(D);
-                })
+                });
             });
         });
     }

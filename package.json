@@ -22,7 +22,7 @@
   },
   "scripts": {
     "coverage": "istanbul cover -- _mocha",
-    "lint": "jshint api-validator.js",
+    "lint": "jshint subtask.js",
     "test": "mocha"
   },
   "main": "./subtask.js",
