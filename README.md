@@ -65,6 +65,24 @@ plus(3, 5).execute(function (R) {
 });
 ```
 
+**Parallel subtasks**
+
+* Use hash to define subtasks
+* task.execute() will trigger all subtasks.execute()
+
+```javascript
+var mathLogic = function (a, b) {
+    return task({
+        multiply: multiply(a, b),
+        plus: puls(a, b)
+    });
+});
+
+mathLogic(9, 8).execute(function (R) {
+    // R will be {multiply: 72, plus: 17}
+});
+```
+
 The Long Story
 --------------
 
