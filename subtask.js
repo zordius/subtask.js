@@ -91,7 +91,7 @@ SUBTASK.isSubtask = function (O) {
 };
 
 subtask.prototype = {
-    next: function (task) {
+    pipe: function (task) {
         var T = this;
         return SUBTASK(function (cb) {
             T.execute(function () {

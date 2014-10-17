@@ -198,9 +198,9 @@ describe('predefined async subtask', function () {
 
 });
 
-describe('subtask.next', function () {
+describe('subtask.pipe', function () {
     var queueTask = function (number) {
-            return jobOne(number).next(jobTwo);
+            return jobOne(number).pipe(jobTwo);
         },
 
         jobOne = function (input) {
@@ -212,7 +212,7 @@ describe('subtask.next', function () {
         };
 
     it('should return a subtask', function (done) {
-        assert.equal(true, ST.isSubtask(ST(3).next()));
+        assert.equal(true, ST.isSubtask(ST(3).pipe()));
         done();
     });
 
@@ -228,5 +228,8 @@ describe('subtask.next', function () {
             assert.equal(5, D);
             done();
         });
+    });
+
+    it('should not execute piped tasks without .execute', function (done) {
     });
 });
