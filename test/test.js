@@ -196,6 +196,12 @@ describe('predefined async subtask', function () {
         });
     });
 
+    it('should cached naturally', function (done) {
+        timeTask(3, 2).execute().execute(function (D) {
+            // this increase coverage
+            done();
+        });
+    });
 });
 
 describe('subtask.pipe', function () {

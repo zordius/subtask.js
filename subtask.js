@@ -26,12 +26,17 @@ var subtask = function (tasks) {
                 func(I);
             }, 1);
         },
+        safelater = function (func, I) {
+            if ('function' == (typeof func)) {
+                later(func, I);
+            }
+        },
         ender = function () {
             count++;
             if (count == all) {
                 executed = true;
                 while (callbacks.length) {
-                    later(callbacks.pop(), result);
+                    safelater(callbacks.pop(), result);
                 }
             }
         };
