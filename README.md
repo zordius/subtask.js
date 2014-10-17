@@ -5,6 +5,19 @@ A JavaScript class and design pattern to make async tasks clear and simple.
 
 [![Dependency Status](https://david-dm.org/zordius/subtask.js.png)](https://david-dm.org/zordius/subtask.js)  [![Build Status](https://travis-ci.org/zordius/subtask.js.svg?branch=master)](https://travis-ci.org/zordius/subtask.js)
 
+Features
+--------
+
+* execute all child tasks in parallel
+* exception safe
+* cached the result naturally
+* singleton (todo)
+
+How to Use
+----------
+
+todo.....
+
 The Long Story
 --------------
 
@@ -189,17 +202,15 @@ Stop using namespace, it is a 'global variable' solution under `CX`. We should u
 
 ```javascript
 framework.defindPage('somePage', function (CX) {
-    var D = {
+    CX.executeJobs({
         title: CX.getData('storyTitle'),
         header: CX.getModule('header'),
         body: CX.getModule('story'),
         footer: CX.getModule('footer')
-    };
-
-    CX.executeJobs(D, function (data) {
+    }, function (data) {
        CX.render('someTemplate', data);
     });
 });
 ```
 
-Now this coding style is subtask.
+<a "https://github.com/zordius/subtask.js">subtask</a> is created for this coding style.
