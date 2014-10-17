@@ -287,4 +287,14 @@ describe('example: task input validation', function () {
             done();
         });
     });
+
+    it('should wors well when id ok', function (done) {
+        getProductByIdTask(3).execute(function (R) {
+            assert.deepEqual({
+                title: 'this is a mocked product',
+                id: 3
+            }, R);
+            done();
+        });
+    });
 });
