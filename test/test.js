@@ -265,6 +265,15 @@ describe('subtask.pipe', function () {
             done();
         });
     });
+
+    it('should transformed input by the callback function', function (done) {
+        queueTask(1).pipe(jobOne, function (R) {
+            return R * R;
+        }).execute(function (D) {
+            assert.equal(50, D);
+            done();
+        });
+    });
 });
 
 describe('example: task input validation', function () {
@@ -288,7 +297,7 @@ describe('example: task input validation', function () {
         });
     });
 
-    it('should wors well when id ok', function (done) {
+    it('should works well when id ok', function (done) {
         getProductByIdTask(3).execute(function (R) {
             assert.deepEqual({
                 title: 'this is a mocked product',
@@ -297,4 +306,37 @@ describe('example: task input validation', function () {
             done();
         });
     });
+
+    describe('example: pipes', function () {
+        var searchProductsTasks = function (keyword) {
+                return ST(function (cb) {
+                    cb({
+                        list: [1, 3, 0],
+                        keyword: keyword
+                    });
+                });
+            };
+
+        it('task: get first searched product', function (done) {
+            searchProductsTasks('test').pipe(getProductByIdTask, function (R) {
+                return R.list[0];
+            }).execute(function (D) {
+                assert.deepEqual({
+                    title: 'this is a mocked product',
+                    id: 1
+                }, D);
+                done();
+            });
+        });
+
+        it('task: get 3rd searched product, not valid', function (done) {
+            searchProductsTasks('test').pipe(getProductByIdTask, function (R) {
+                return R.list[2];
+            }).execute(function (D) {
+                assert.deepEqual(undefined, D);
+                done();
+            });
+        });
+    });
 });
+

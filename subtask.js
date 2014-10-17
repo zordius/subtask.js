@@ -95,11 +95,11 @@ SUBTASK.isSubtask = function (O) {
 };
 
 subtask.prototype = {
-    pipe: function (task) {
+    pipe: function (task, transform) {
         var T = this;
         return SUBTASK(function (cb) {
             T.execute(function () {
-                task.apply(task, arguments).execute(function (D) {
+                task.apply(task, (transform && transform.apply) ? [transform.apply(null, arguments)] : arguments).execute(function (D) {
                     cb(D);
                 });
             });
