@@ -78,6 +78,7 @@ describe('subtask.execute', function () {
             done();
         });
     });
+
     it('should handle subtask', function (done) {
         ST({a: 1, b: 0, c: ST(3)}).execute(function (D) {
             assert.deepEqual({a: 1, b: 0, c: 3}, D);
