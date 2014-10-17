@@ -266,3 +266,25 @@ describe('subtask.pipe', function () {
         });
     });
 });
+
+describe('example: task input validation', function () {
+    var getProductByIdTask = function(id) {
+            if (!id) {
+                return ST();
+            }
+
+            return ST(function (cb) {
+                cb({
+                    title: 'this is a mocked product',
+                    id: id,
+                });
+            });
+        };
+
+    it('should safe when no id', function (done) {
+        getProductByIdTask(0).execute(function (R) {
+            assert.equal(undefined, R);
+            done();
+        });
+    });
+});
