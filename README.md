@@ -18,9 +18,9 @@ How to Use
 
 **Define task**
 
-* A task can be created by input param.
+* A task can be created by different input param.
 * After it be created, the final result should be always same.
-* Therefore, task should only be executed one time and keep result.
+* Therefore, the logic inside a task should be executed only one time and the result is keeped.
 
 ```javascript
 var task = require('subtask'),
@@ -55,7 +55,7 @@ plus(4, 6).execute(function (R) {
 ```
 
 * .execute() can be chained
-* Task result is cached naturally
+* the result will be cached by the task
 
 ```javascript
 plus(3, 5).execute(function (R) {
@@ -80,6 +80,22 @@ var mathLogic = function (a, b) {
 
 mathLogic(9, 8).execute(function (R) {
     // R will be {multiply: 72, plus: 17}
+});
+```
+
+**Pipe the tasks**
+
+* Use the result of a task as input of next task.
+
+```javascript
+var taskQueue = function (input) {
+    return firstTask(input).pipe(secondTask).pipe(thirdTask);
+});
+
+taskQueue(123).execute(function (D) {
+    // get result1 from firstTask(123).execute()
+    // then get result2 from secondTask(result1).execute()
+    // then get D from thirdTask(result2).execute()
 });
 ```
 
