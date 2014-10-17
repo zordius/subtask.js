@@ -5,3 +5,7 @@ node_js:
   - '0.11'
 script:
   - npm test
+  - travis.sh
+env:
+  global:
+    - secure: "MEDsgA/up+lKDM6Vg8Ok6+5pP7byctwWhRel6c4UkE6gsH6CUImcjCZkanryA3b4MvLnZxpZtBJWq64F6KHv71vr9EBvC8eb2J1J5y7B0FvXxEw3efYpxGm3QTYvWvxdB/qrU5l8xuXTfbWvUrvvk6SSDBQt1V/XEhSSSPppTMY="
