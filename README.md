@@ -182,3 +182,24 @@ Namespace rule is hard to maintain:
 * CX.module.story: story module....what happened when I put 2 story modules in 1 page?!!!
 
 We do not believe all developers in the team remember all naming rules.
+
+**Make it local**
+
+Stop using namespace, it is a 'global variable' solution under `CX`. We should use local variable.
+
+```javascript
+framework.defindPage('somePage', function (CX) {
+    var D = {
+        title: CX.getData('storyTitle'),
+        header: CX.getModule('header'),
+        body: CX.getModule('story'),
+        footer: CX.getModule('footer')
+    };
+
+    CX.executeJobs(D, function (data) {
+       CX.render('someTemplate', data);
+    });
+});
+```
+
+Now this coding style is subtask.
