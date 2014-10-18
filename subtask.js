@@ -5,6 +5,18 @@ var jpp = require('json-path-processor'),
     cache = require('simple-lru-cache'),
     taskpool = null,
 
+later = function (func, I) {
+    setTimeout(function () {
+        func(I);
+    }, 1);
+},
+
+safelater = function (func, I) {
+    if ('function' === (typeof func)) {
+        later(func, I);
+    }
+},
+
 subtask = function (tasks) {
     var executed = false,
         type = (typeof tasks),
@@ -23,16 +35,6 @@ subtask = function (tasks) {
                     result[index] = ('function' === (typeof task)) ? undefined : task;
                     ender();
                 });
-            }
-        },
-        later = function (func, I) {
-            setTimeout(function () {
-                func(I);
-            }, 1);
-        },
-        safelater = function (func, I) {
-            if ('function' === (typeof func)) {
-                later(func, I);
             }
         },
         ender = function () {
