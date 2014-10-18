@@ -2,7 +2,10 @@
 'use strict';
 
 var jpp = require('json-path-processor'),
-    subtask = function (tasks) {
+    cache = require('simple-lru-cache'),
+    taskpool = null,
+
+subtask = function (tasks) {
     var executed = false,
         type = (typeof tasks),
         count = 0,
@@ -93,6 +96,32 @@ SUBTASK = function(tasks) {
 
 SUBTASK.isSubtask = function (O) {
     return O instanceof subtask;
+};
+
+SUBTASK.initCache = function (size) {
+    if (taskpool) {
+        taskpool.reset();
+    }
+    taskpool = new cache({maxSize: size});
+};
+
+SUBTASK.cache = function (tasks, key) {
+    var T;
+
+    if (!taskpool) {
+        return SUBTASK(tasks);
+    }
+
+    T = taskpool.get(key);
+
+    if (T) {
+        return T;
+    }
+
+    T = SUBTASK(tasks);
+    T.taskKey = key;
+    taskpool.set(key, T);
+    return T;
 };
 
 subtask.prototype = {
