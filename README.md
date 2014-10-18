@@ -77,6 +77,8 @@ plus(3, 5).execute(function (R) {
 
 * Use hash to define subtasks
 * task.execute() will trigger all subtasks.execute()
+* After all subtasks .execute() done , callback of task.execute() will be triggered.
+* Results of all subtasks .execute() will be collected in a hash.
 
 ```javascript
 var mathLogic = function (a, b) {
