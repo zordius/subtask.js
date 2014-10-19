@@ -10,6 +10,7 @@ Features
 
 * execute all child tasks in parallel
 * execute tasks sequentially, pipe previous output into next task
+* exception safe
 * cached the result naturally (single task cache)
 * singleton by user defined key (cross task cache)
 

@@ -62,11 +62,17 @@ subtask = function (tasks) {
 
         // wrap a function
         if ('function' === type) {
-            tasks(function (D) {
-                result = D;
+            try {
+                tasks(function (D) {
+                    result = D;
+                    executed = true;
+                    cb(result);
+                });
+            } catch (E) {
+                result = undefined;
                 executed = true;
-                cb(result);
-            });
+                cb();
+            }
             return this;
         }
 

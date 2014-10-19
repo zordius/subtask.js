@@ -374,3 +374,26 @@ describe('example: task input validation', function () {
     });
 });
 
+describe('subtask error handling', function () {
+    it('should nothing bad when task created', function (done) {
+        var badTask = function (id) {
+            return ST(function (cb) {
+                cb(id.a.b.c);
+            });
+        };
+        done();
+    });
+
+    it('should handle exception inside task when .execute()', function (done) {
+        var badTask = function (id) {
+            return ST(function (cb) {
+                cb(id.a.b.c);
+            });
+        };
+
+        badTask(123).execute(function (D) {
+            assert.equal(undefined, D);
+            done();
+        });
+    });
+});
