@@ -28,7 +28,7 @@ How to Use
 
 * A task can be created by different input param.
 * After it be created, the final result should be always same.
-* Therefore, the logic inside a task should be executed only one time and the result is keeped.
+* Therefore, the logic inside a task should be executed once and the result is keeped.
 
 ```javascript
 var task = require('subtask'),
