@@ -10,8 +10,8 @@ Features
 
 * execute all child tasks in parallel
 * exception safe
-* cached the result naturally
-* singleton (todo)
+* cached the result naturally (single task cache)
+* singleton by user defined key (cross task cache)
 
 **Why not..**
 
