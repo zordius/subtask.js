@@ -111,7 +111,8 @@ taskQueue(123).execute(function (D) {
 
 **Transform then pipe**
 
-* Use .transform() to change the task result or pick wanted value 
+* Use .transform() to change the task result or pick wanted value
+* Use .pick('path.to.value') to pick wanted value
 
 ```javascript
 task1(123)
@@ -122,6 +123,39 @@ task1(123)
 .pipe(task3)   // take result of task2 , send into task3
 .execute(function (D) {
     // now D is result of task3
+});
+
+// when .execute() we get the title of first story
+task2(456).pick('story.0.title')
+```
+
+**Cached task**
+
+* Init app level cache with proper size
+* Define cache key when task created
+* Then do not need to worry about api|template|html|anything cache!
+* All tasks with same key will refer to same instance
+
+```javascript
+// Init cache when app start
+task.initCache(1000);
+
+// Define cache key when create task
+function getProudctById(id) {
+    return task(function (cb) {
+        apiRequest(productApi + id, function (R) {
+            cb(R);
+        });
+    }).cache('product-' + id); // define a unique key you like
+}
+
+// example to render product id=10
+task({
+    title: getProductById(10).pick('title'),       // these 3 tasks refer to same instance
+    story: getProductById(10).pick('description'), // so you do not need to worry about
+    related: getProductById(10).pick('promotions') // multiple api calls in this case
+}).execute(function (R) {
+    // R = {title: .., , story: ... , related: ...}
 });
 ```
 
