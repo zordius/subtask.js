@@ -143,11 +143,11 @@ task.initCache(1000);
 
 // Define cache key when create task
 function getProudctById(id) {
-    return task(function (cb) {
+    return task.cache(function (cb) {
         apiRequest(productApi + id, function (R) {
             cb(R);
         });
-    }).cache('product-' + id); // define a unique key you like
+    }, 'product-' + id); // define a unique key you like
 }
 
 // example to render product id=10

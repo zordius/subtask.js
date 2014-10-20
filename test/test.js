@@ -308,6 +308,35 @@ describe('subtask.pick', function () {
     });
 });
 
+describe('subtask.cache', function () {
+    var called = 0,
+        cachedTask = function (id) {
+            return ST.cache(function (cb) {
+                called++;
+                cb(id);
+            }, id);
+        };
+
+    it('should default no cache', function (done) {
+        var T1 = cachedTask(5);
+
+        assert.equal(undefined, T1.taskkey);
+        done();
+        T1.testinstance = true;
+        assert.equal(undefined, cachedTask(5).testinstance);
+    });
+
+    it('should work after initCache', function (done) {
+        var T1;
+
+        ST.initCache(100);
+        T1 = cachedTask(5);
+        done();
+        T1.testinstance = true;
+        assert.equal(true, cachedTask(5).testinstance);
+    });
+});
+
 describe('example: task input validation', function () {
     var getProductByIdTask = function(id) {
             if (!id) {
