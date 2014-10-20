@@ -335,6 +335,12 @@ describe('subtask.cache', function () {
         T1.testinstance = true;
         assert.equal(true, cachedTask(5).testinstance);
     });
+
+    it('should be different instance', function (done) {
+        assert.equal(true, cachedTask(5).testinstance);
+        assert.equal(undefined, cachedTask(7).testinstance);
+        done();
+    });
 });
 
 describe('example: task input validation', function () {
