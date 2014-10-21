@@ -114,21 +114,33 @@ SUBTASK.initCache = function (size) {
 };
 
 SUBTASK.cache = function (tasks, key) {
-    var T;
+    var T,
+        thisPool = (this && this.pool) ? this.pool : false,
+        thisKey = ((this && this.taskKey) ? this.taskKey : '') + key;
 
-    if (!taskpool) {
-        return SUBTASK(tasks);
+    if (thisPool) {
+        if (thisPool[thisKey]) {
+            return thisPool[thisKey];
+        }
+
+        T = SUBTASK(tasks);
+        thisPool[thisKey] = T;
+    } else {
+        if (!taskpool) {
+            return SUBTASK(tasks);
+        }
+
+        T = taskpool.get(thisKey);
+
+        if (T) {
+            return T;
+        }
+
+        T = SUBTASK(tasks);
+        taskpool.set(thisKey, T);
     }
 
-    T = taskpool.get(key);
-
-    if (T) {
-        return T;
-    }
-
-    T = SUBTASK(tasks);
-    T.taskKey = key;
-    taskpool.set(key, T);
+    T.taskKey = thisKey;
     return T;
 };
 
