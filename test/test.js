@@ -374,7 +374,7 @@ describe('subtask.cache', function () {
             return ST.cache(function (cb) {
                 called++;
                 cb(id);
-            }, id);
+            }, id, 200);
         };
 
     it('should default no cache', function (done) {
@@ -400,6 +400,14 @@ describe('subtask.cache', function () {
         assert.equal(true, cachedTask(5).testinstance);
         assert.equal(undefined, cachedTask(7).testinstance);
         done();
+    });
+
+    it('should timeout', function (done) {
+        assert.equal(true, cachedTask(5).testinstance);
+        setTimeout(function () {
+            assert.equal(undefined, cachedTask(5).testinstance);
+            done();
+        }, 500);
     });
 });
 

@@ -130,7 +130,7 @@ SUBTASK.cache = function (tasks, key, timeout) {
         T = taskpool.get(thisKey);
     }
 
-    if (timeout && ((T.taskTime + timeout) < now)) {
+    if (timeout && T && ((T.taskTime + timeout) < now)) {
         T = undefined;
     }
 
