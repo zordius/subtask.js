@@ -60,27 +60,26 @@ subtask = function (tasks) {
             return this;
         }
 
-        // wrap a function
-        if ('function' === type) {
-            try {
-                tasks(function (D) {
-                    result = D;
-                    executed = true;
-                    cb(result);
-                });
-            } catch (E) {
-                result = undefined;
-                executed = true;
-                cb();
-            }
-            return this;
-        }
-
         // wait for result
         callbacks.push(cb);
 
         // started, not again
         if (all) {
+            return this;
+        }
+
+        // wrap a function
+        if ('function' === type) {
+            all = 1;
+            try {
+                tasks(function (D) {
+                    result = D;
+                    ender();
+                });
+            } catch (E) {
+                result = undefined;
+                ender();
+            }
             return this;
         }
 
