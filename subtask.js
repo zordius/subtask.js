@@ -118,25 +118,23 @@ SUBTASK.cache = function (tasks, key) {
         thisPool = (this && this.pool) ? this.pool : false,
         thisKey = ((this && this.taskKey) ? this.taskKey : '') + key;
 
-    if (thisPool) {
-        if (thisPool[thisKey]) {
-            return thisPool[thisKey];
-        }
+    if (thisPool && thisPool[thisKey]) {
+        T = thisPool[thisKey];
+    }
 
-        T = SUBTASK(tasks);
-        thisPool[thisKey] = T;
-    } else {
-        if (!taskpool) {
-            return SUBTASK(tasks);
-        }
-
+    if (taskpool) {
         T = taskpool.get(thisKey);
+    }
 
-        if (T) {
-            return T;
-        }
-
+    if (!T) {
         T = SUBTASK(tasks);
+    }
+
+    if (thisPool) {
+        thisPool[thisKey] = T;
+    }
+
+    if (taskpool) {
         taskpool.set(thisKey, T);
     }
 
