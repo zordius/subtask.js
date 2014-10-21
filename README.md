@@ -12,7 +12,8 @@ Features
 * execute tasks sequentially, pipe previous output into next task
 * exception safe
 * cached the result naturally (single task cache)
-* singleton by user defined key (cross task cache)
+* global cached by user defined key (cross task cache)
+* local cached by user defined key
 
 **Why not..**
 
@@ -130,12 +131,13 @@ task1(123)
 task2(456).pick('story.0.title')
 ```
 
-**Cached task**
+**Global Cached task**
 
 * Init app level cache with proper size
 * Define cache key when task created
 * Then do not need to worry about api|template|html|anything cache!
 * All tasks with same key will refer to same instance
+* Provide timeout as 3rd param when you want to expire it
 
 ```javascript
 // Init cache when app start
@@ -158,6 +160,48 @@ task({
 }).execute(function (R) {
     // R = {title: .., , story: ... , related: ...}
 });
+
+// Cache API results in 5 minutes
+function getAPIResult() {
+    return task.cache(function (cb) {
+       ....
+    }, 'apicall', 300000);
+}
+```
+
+**Local Cached task**
+
+* Extend subtask.cache
+* Set this.taskPool to a hash as cache storage
+* Set this.taskKey to extend cache key
+* You can enable both global task cache and local task cache in the same time
+
+```javascript
+var extendedCacheTask = {
+    create: function () {
+        return subtask.cache.apply(this, arguments);
+    },
+    taskPool: {},
+    taskKey: 'local_'
+},
+
+localCacheAPITask = function (url) {
+    return extendedCacheTask.create(function (cb) {
+        ....
+    }, 'api-' + url, 86400000);
+},
+
+globalCacheAPITask = function (url) {
+    return task.cache(function (cb) {
+        ....
+    }, 'api-' + url, 86400000);
+};
+
+var task1 = localCacheAPITask('http://abc'),
+    task2 = localCacheAPITask('http://def'), // !== task1
+    task3 = localCacheAPITask('http://abc'), // == task1
+    task4 = globalCacheAPITask('http://abc'), // !== task1 when you do not task.initCache()
+    task5 = globalCacheAPITask('http://def'); // == task2 when you already task.initCache()
 ```
 
 The Long Story
