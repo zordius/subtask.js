@@ -113,10 +113,15 @@ SUBTASK.initCache = function (size) {
     taskpool = new cache({maxSize: size});
 };
 
-SUBTASK.cache = function (tasks, key) {
+SUBTASK.cache = function (tasks, key, timeout) {
     var T,
         thisPool = (this && this.pool) ? this.pool : false,
-        thisKey = ((this && this.taskKey) ? this.taskKey : '') + key;
+        thisKey = ((this && this.taskKey) ? this.taskKey : '') + key,
+        now;
+
+    if (timeout) {
+        now = (new Date()).getTime();
+    }
 
     if (thisPool && thisPool[thisKey]) {
         T = thisPool[thisKey];
@@ -124,6 +129,10 @@ SUBTASK.cache = function (tasks, key) {
 
     if (taskpool) {
         T = taskpool.get(thisKey);
+    }
+
+    if (timeout && ((T.taskTime + timeout) < now)) {
+        T = undefined;
     }
 
     if (!T) {
@@ -139,6 +148,8 @@ SUBTASK.cache = function (tasks, key) {
     }
 
     T.taskKey = thisKey;
+    T.taskTime = now;
+
     return T;
 };
 
