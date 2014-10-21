@@ -114,7 +114,7 @@ SUBTASK.initCache = function (size) {
 
 SUBTASK.cache = function (tasks, key, timeout) {
     var T,
-        thisPool = (this && this.pool) ? this.pool : false,
+        thisPool = (this && this.taskPool) ? this.taskPool : false,
         thisKey = ((this && this.taskKey) ? this.taskKey : '') + key,
         now;
 

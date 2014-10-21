@@ -335,6 +335,39 @@ describe('subtask.pick', function () {
     });
 });
 
+describe('subtask.cache with extended taskPool', function () {
+    var called = 0,
+        extendedCacheTask = {
+            create: function () {
+                return ST.cache.apply(this, arguments);
+            },
+            taskPool: {},
+            taskKey: 'local_'
+        },
+
+        cachedTask = function (id) {
+            return extendedCacheTask.create(function (cb) {
+                called++;
+                cb(id);
+            }, id);
+        };
+
+    it('should be same instance', function (done) {
+        var T = cachedTask(5);
+
+        T.testinstance = true;
+        assert.equal(true, cachedTask(5).testinstance);
+        assert.deepEqual(extendedCacheTask.taskPool['local_5'], T);
+        done();
+    });
+
+    it('should be different instance', function (done) {
+        assert.equal(true, cachedTask(5).testinstance);
+        assert.equal(undefined, cachedTask(7).testinstance);
+        done();
+    });
+});
+
 describe('subtask.cache', function () {
     var called = 0,
         cachedTask = function (id) {
