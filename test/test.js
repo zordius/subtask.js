@@ -497,6 +497,7 @@ describe('subtask error handling', function () {
 
         domain.on('error', function (err) {
             // after task done, still throw original exception
+console.log('node8 ok?');
             done();
         });
 
