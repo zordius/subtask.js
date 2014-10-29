@@ -488,12 +488,7 @@ describe('subtask error handling', function () {
     });
 
     it('should handle exception inside task when .execute()', function (done) {
-        var domain = require('domain').create(),
-            badTask = function (id) {
-            return ST(function (cb) {
-                cb(id.a.b.c);
-            });
-        };
+        var domain = require('domain').create();
 
         domain.on('error', function (err) {
             // after task done, still throw original exception
@@ -502,6 +497,12 @@ console.log('node8 ok?');
         });
 
         domain.run(function () {
+            var badTask = function (id) {
+                return ST(function (cb) {
+                    cb(id.a.b.c);
+                });
+            };
+
             badTask(123).execute(function (D) {
                 assert.equal(undefined, D);
             });
