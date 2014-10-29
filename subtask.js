@@ -6,9 +6,9 @@ var jpp = require('json-path-processor'),
     taskpool = null,
 
 later = function (func, I) {
-    setTimeout(function () {
+    process.nextTick(function () {
         func(I);
-    }, 1);
+    });
 },
 
 safelater = function (func, I) {
@@ -79,6 +79,9 @@ subtask = function (tasks) {
             } catch (E) {
                 result = undefined;
                 ender();
+                later(function () {
+                    throw (E);
+                });
             }
             return this;
         }
