@@ -519,7 +519,7 @@ describe('subtask error handling', function () {
         });
     });
 
-    it('should handle exception inside .transform', function (done) {
+    (process.version.match(/^v0.8/) ? it.skip : it)('should handle exception inside .transform', function (done) {
         var domain = require('domain').create();
 
         domain.on('error', function (err) {
