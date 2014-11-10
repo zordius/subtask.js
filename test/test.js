@@ -519,4 +519,20 @@ describe('subtask error handling', function () {
         });
     });
 
+    it('should handle exception inside .transform', function (done) {
+        var domain = require('domain').create();
+
+        domain.on('error', function (err) {
+            // after task done, still throw original exception
+            done();
+        });
+
+        domain.run(function () {
+            ST().transform(function (R) {
+                return R.ok;
+            }).execute(function (D) {
+                assert.equal(undefined, D);
+            });
+        });
+    });
 });

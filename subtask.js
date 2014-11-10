@@ -174,7 +174,17 @@ subtask.prototype = {
 
         return SUBTASK(function (cb) {
             T.execute(function (D) {
-                cb(func(D));
+                var O,
+                    err = undefined;
+                try {
+                    O = func(D);
+                } catch (E) {
+                    err = E;
+                }
+                cb(O);
+                if (err) {
+                    throw (err);
+                }
             });
         });
     },
