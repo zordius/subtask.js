@@ -391,9 +391,9 @@ describe('subtask.cache', function () {
 
         ST.initCache(100);
         T1 = cachedTask(5);
-        done();
         T1.testinstance = true;
         assert.equal(true, cachedTask(5).testinstance);
+        done();
     });
 
     it('should be different instance', function (done) {
@@ -408,6 +408,17 @@ describe('subtask.cache', function () {
             assert.equal(undefined, cachedTask(5).testinstance);
             done();
         }, 500);
+    });
+
+    it('should reset taskPool when initCache 2nd time', function (done) {
+        // for coverage
+        ST.initCache(100);
+        done();
+    });
+
+    it('should not cached after initCache', function (done) {
+        assert.equal(undefined, cachedTask(5).testinstance);
+        done();
     });
 });
 
