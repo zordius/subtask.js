@@ -88,8 +88,10 @@ subtask = function (tasks) {
 
         // execute
         for (var I in tasks) {
-            all++;
-            runner(I, tasks[I]);
+            if (tasks.hasOwnProperty(I)) {
+                all++;
+                runner(I, tasks[I]);
+            }
         }
 
         if (all === 0) {
