@@ -1,6 +1,6 @@
 {
   "name": "subtask",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A JavaScript class and design pattern to make async tasks clear and simple.",
   "author": "Zordius <zordius@yahoo-inc.com>",
   "contributors": [
