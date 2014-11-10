@@ -183,7 +183,9 @@ subtask.prototype = {
                 }
                 cb(O);
                 if (err) {
-                    throw (err);
+                    later(function () {
+                        throw (err);
+                    });
                 }
             });
         });
