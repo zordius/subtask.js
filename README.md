@@ -28,19 +28,19 @@ How to Use
 
 **Define task**
 
-* A task can be created by different input param.
-* After it be created, the final result should be always same.
-* Therefore, the logic inside a task should be executed once and the result is keeped.
+* A task is created by `task creator` function, the function will take your input parameters then return the created task instance.
+* After the task be created, the final result should be always same because the input parameters were already put into the task.
+* Therefore, the logic inside a task will be executed only once and the result is keeped by subtask.
 
 ```javascript
 var task = require('subtask'),
 
-// This is a sync task
+// This is a task creator to do sync jobs
 multiply = function (a, b) {
     return task(a * b);
 };
 
-// This is an async task
+// This is a task creator to do async jobs
 plus = function (a, b) {
     return task(function (cb) {
         mathApi.plus(a, b, function (value) {
@@ -52,7 +52,9 @@ plus = function (a, b) {
 
 **Execute task**
 
-* Same async interface for all tasks
+* When you run `.execute()` the first time, subtask will run the inner logic in the task.
+* When you run `.execute()` many times, subtask will return the result of first execution.
+* If the task is async, all `.execute()` will wait for first result. Subtask will ensure the inner logic is be executed only once.
 
 ```javascript
 multiply(3, 5).execute(function (R) {
@@ -64,7 +66,6 @@ plus(4, 6).execute(function (R) {
 });
 ```
 
-* .execute() can be chained
 * the result will be cached by the task
 
 ```javascript
@@ -77,10 +78,10 @@ plus(3, 5).execute(function (R) {
 
 **Parallel subtasks**
 
-* Use hash to define subtasks
-* task.execute() will trigger all subtasks.execute()
+* Use hash to define subtasks.
+* task.execute() will trigger all subtasks.execute() parallelly.
 * After all subtasks .execute() done , callback of task.execute() will be triggered.
-* Results of all subtasks .execute() will be collected in a hash.
+* Results of all subtasks .execute() will be collected into the hash.
 
 ```javascript
 var mathLogic = function (a, b) {
@@ -97,7 +98,7 @@ mathLogic(9, 8).execute(function (R) {
 
 **Pipe the tasks**
 
-* Use the result of a task as input of next task
+* Use the result of a task as input of next task creator
 
 ```javascript
 var taskQueue = function (input) {
