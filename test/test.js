@@ -632,7 +632,7 @@ describe('subtask error handling', function () {
             assert.equal(4, exec);
             assert.equal(1, err);
             done();
-        }, 200);
+        }, 500);
     });
 
     it('should no exception when .quiet() called', function (done) {
