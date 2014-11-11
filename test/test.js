@@ -1,7 +1,10 @@
 'use strict';
 
 var assert = require('chai').assert,
-    ST = require('../subtask.js');
+    ST = require('../subtask.js'),
+    itNotIncludeNode8 = function (desc, cb) {
+        (process.version.match(/^v0.8/) ? it.skip : it)(desc, cb);
+    };
 
 describe('subtask', function () {
     it('should be a function', function (done) {
@@ -498,7 +501,7 @@ describe('subtask error handling', function () {
         done();
     });
 
-    (process.version.match(/^v0.8/) ? it.skip : it)('should handle exception inside task when .execute()', function (done) {
+    itNotIncludeNode8('should handle exception inside task when .execute()', function (done) {
         var domain = require('domain').create();
 
         domain.on('error', function (err) {
@@ -519,19 +522,55 @@ describe('subtask error handling', function () {
         });
     });
 
-    (process.version.match(/^v0.8/) ? it.skip : it)('should handle exception inside .transform', function (done) {
-        var domain = require('domain').create();
+    itNotIncludeNode8('should handle exception inside .transform', function (done) {
+        var domain = require('domain').create(),
+            exec = 0;
 
         domain.on('error', function (err) {
             // after task done, still throw original exception
+            assert.equal(2, exec);
             done();
         });
 
         domain.run(function () {
             ST().transform(function (R) {
+                exec++;
                 return R.ok;
             }).execute(function (D) {
+                exec++;
                 assert.equal(undefined, D);
+            });
+        });
+    });
+
+    it('should handle exception inside children tasks', function (done) {
+        var domain = require('domain').create(),
+            exec = 0;
+
+        domain.on('error', function (err) {
+            // after task done, still throw original exception
+            assert.equal(2, exec);
+            done();
+        });
+
+        domain.run(function () {
+            ST({
+                a: 1,
+                b: ST(2),
+                c: ST(3).transform(function (R) {return R * 2;}),
+                d: ST().transform(function (R) {return R.a.b;})
+            }).transform(function (R) {
+                exec++;
+                assert.deepEqual({
+                    a: 1,
+                    b: 2,
+                    c: 6,
+                    d: undefined
+                }, R);
+                return R.c;
+            }).execute(function (D) {
+                exec++;
+                assert.equal(6, D);
             });
         });
     });
