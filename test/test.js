@@ -598,4 +598,36 @@ describe('subtask error handling', function () {
             });
         });
     });
+
+    itNotIncludeNode8('should throw exception once', function (done) {
+        var domain = require('domain').create(),
+            exec = 0,
+            err = 0;
+
+        domain.on('error', function () {
+            err++;
+        });
+
+        domain.run(function () {
+            ST().transform(function (R) {
+                exec++;
+                return R.ok;
+            }).execute(function (D) {
+                exec++;
+                assert.equal(undefined, D);
+            }).execute(function (D) {
+                exec++;
+                assert.equal(undefined, D);
+            }).execute(function (D) {
+                exec++;
+                assert.equal(undefined, D);
+            });
+        });
+
+        setTimeout(function () {
+            assert.equal(4, exec);
+            assert.equal(1, err);
+            done();
+        }, 100);
+    });
 });

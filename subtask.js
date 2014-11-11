@@ -42,7 +42,7 @@ subtask = function (tasks) {
                 }
                 if (myself.errors.length && myself.throwError) {
                     later(function () {
-                        throw myself.errors[0];
+                        throw myself.errors;
                     });
                 }
             }
@@ -89,7 +89,7 @@ subtask = function (tasks) {
 
         // plus one to prevent end check passed in loop
         all++;
-        // execute
+        // wrap a hash and execute subtasks
         for (var I in tasks) {
             if (tasks.hasOwnProperty(I)) {
                 if (SUBTASK.isSubtask(tasks[I])) {
