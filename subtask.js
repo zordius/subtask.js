@@ -59,7 +59,15 @@ subtask = function (tasks) {
 
         // executed, return cached result
         if (executed) {
-            cb(result);
+            try {
+                cb.apply(myself, [result]);
+            } catch (E) {
+                if (myself.throwError) {
+                    later(function () {
+                        throw E;
+                    });
+                }
+            }
             return this;
         }
 
@@ -174,6 +182,7 @@ subtask.prototype = {
     },
     track: function (task) {
         this.errors = task.errors;
+        this.throwError = task.throwError;
         task.throwError = false;
         return this;
     },
