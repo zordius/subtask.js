@@ -547,7 +547,7 @@ describe('subtask error handling', function () {
         });
     });
 
-    itNotIncludeNode8('should handle exception inside .transform', function (done) {
+    itNotIncludeNode8('should handle exception inside .transform()', function (done) {
         var domain = require('domain').create(),
             exec = 0;
 
@@ -632,13 +632,13 @@ describe('subtask error handling', function () {
             assert.equal(4, exec);
             assert.equal(1, err);
             done();
-        }, 100);
+        }, 200);
     });
 
     it('should no exception when .quiet() called', function (done) {
         var exec = 0;
 
-        ST({}).transform(function (R) {
+        ST().transform(function (R) {
             exec++;
             return R.ok;
         }).quiet().execute(function (D) {
@@ -650,11 +650,36 @@ describe('subtask error handling', function () {
         }).execute(function (D) {
             exec++;
             D.e = D.f;
+        }).transform(function (D) {
+            exec++;
+            return D.k;
+        }).execute(function (R) {
+            exec++;
         });
 
         setTimeout(function () {
-            assert.equal(4, exec);
+            assert.equal(6, exec);
             done();
-        }, 100);
+        }, 200);
+    });
+
+    it('should no exception when .quiet() after .pipe() or .transform()', function (done) {
+        var exec = 0,
+            badTask = function () {
+                return ST(function () {
+                    return arguments[2].ok;
+                });
+            };
+
+        ST().transform(function (R) {
+            exec++;
+            return R.ok;
+        }).pipe(badTask).transform(function (D) {
+            exec++;
+            return;// D.bad;
+        }).quiet().execute(function (O) {
+            assert.equal(2, exec);
+            done();
+        });
     });
 });

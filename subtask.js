@@ -15,7 +15,7 @@ laterThrow = function (E) {
     });
 },
 
-safeCallback = function (task, data, cb) {
+safeCallback = function (task, data, cb, cb2) {
     if ('function' !== (typeof cb)) {
         return;
     }
@@ -23,6 +23,9 @@ safeCallback = function (task, data, cb) {
         try {
             cb.apply(task, [data]);
         } catch (E) {
+            if (cb2 && cb2.apply) {
+                cb2.apply(task, []);
+            }
             if (task.throwError) {
                 laterThrow(E);
             }
@@ -61,7 +64,7 @@ subtask = function (tasks) {
 
     this.errors = [];
     this.throwError = true;
-    this.execute = function (cb) {
+    this.execute = function (cb, cb2) {
         // do nothing when no subtask or input string
         if (!tasks || ('string' === type)) {
             cb(tasks);
@@ -70,7 +73,7 @@ subtask = function (tasks) {
 
         // executed, return cached result
         if (executed) {
-            safeCallback(this, result, cb);
+            safeCallback(this, result, cb, cb2);
             return this;
         }
 
@@ -194,9 +197,12 @@ subtask.prototype = {
 
         return SUBTASK(function (cb) {
             T.execute(function (D) {
-                task(D).execute(function (R) {
+                var nextTask = task(D);
+
+                T.track(nextTask);
+                nextTask.execute(function (R) {
                     cb(R);
-                });
+                }, cb);
             });
         }).track(T);
     },
@@ -204,9 +210,9 @@ subtask.prototype = {
         var T = this;
 
         return SUBTASK(function (cb) {
-            T.execute(function () {
-                cb(func.apply(T, arguments));
-            });
+            T.execute(function (D) {
+                cb(func.apply(T, [D]));
+            }, cb);
         }).track(T);
     },
     pick: function (path) {
@@ -215,7 +221,7 @@ subtask.prototype = {
         return SUBTASK(function (cb) {
             T.execute(function (D) {
                 cb(jpp(D, path));
-            });
+            }, cb);
         }).track(T);
     }
 };
