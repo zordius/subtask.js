@@ -27,6 +27,7 @@ subtask = function (tasks) {
         callbacks = [],
         runner = function (index, task) {
             all++;
+            task.errors = myself.errors;
             task.quiet().execute(function (D) {
                 result[index] = D;
                 ender();
@@ -39,7 +40,7 @@ subtask = function (tasks) {
                 while (callbacks.length) {
                     safelater(callbacks.pop(), result);
                 }
-                if (myself.errors.length && !myself.silent) {
+                if (myself.errors.length && myself.throwError) {
                     later(function () {
                         throw myself.errors[0];
                     });
@@ -48,7 +49,7 @@ subtask = function (tasks) {
         };
 
     this.errors = [];
-    this.silent = false;
+    this.throwError = true;
     this.execute = function (cb) {
         // do nothing when no subtask or input string
         if (!tasks || ('string' === type)) {
@@ -162,7 +163,12 @@ SUBTASK.cache = function (tasks, key, timeout) {
 
 subtask.prototype = {
     quiet: function () {
-        this.silent = true;
+        this.throwError = false;
+        return this;
+    },
+    track: function (task) {
+        this.errors = task.errors;
+        task.throwError = false;
         return this;
     },
     pipe: function (task) {
@@ -174,16 +180,16 @@ subtask.prototype = {
                     cb(R);
                 });
             });
-        });
+        }).track(T);
     },
     transform: function (func) {
-        var T = this,
-            newTask = SUBTASK(function (cb) {
-                T.quiet().execute(function (D) {
-                    cb(func(D));
-                });
+        var T = this;
+
+        return SUBTASK(function (cb) {
+            T.execute(function (D) {
+                cb(func(D));
             });
-        return newTask;
+        }).track(T);
     },
     pick: function (path) {
         var T = this;
@@ -192,7 +198,7 @@ subtask.prototype = {
             T.execute(function (D) {
                 cb(jpp(D, path));
             });
-        });
+        }).track(T);
     }
 };
 
