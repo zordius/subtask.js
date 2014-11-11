@@ -192,8 +192,8 @@ subtask.prototype = {
         var T = this;
 
         return SUBTASK(function (cb) {
-            T.execute(function (D) {
-                cb(func(D));
+            T.execute(function () {
+                cb(func.apply(T, arguments));
             });
         }).track(T);
     },

@@ -573,8 +573,6 @@ describe('subtask error handling', function () {
 
         domain.on('error', function (err) {
             // after task done, still throw original exception
-console.log('error~~~~~~~~ 3');
-console.log(err);
             assert.equal(2, exec);
             done();
         });
@@ -584,7 +582,7 @@ console.log(err);
                 a: 1,
                 b: ST(2),
                 c: ST(3).transform(function (R) {return R * 2;}),
-                d: ST().transform(function (R) {return R;})
+                d: ST().transform(function (R) {return R.a.b;})
             }).transform(function (R) {
                 exec++;
                 assert.deepEqual({
