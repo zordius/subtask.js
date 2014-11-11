@@ -5,16 +5,29 @@ var jpp = require('json-path-processor'),
     cache = require('simple-lru-cache'),
     taskpool = null,
 
-later = function (func, I) {
-    process.nextTick(function () {
-        func(I);
+later = function (func) {
+    process.nextTick(func);
+},
+
+laterThrow = function (E) {
+    later(function () {
+        throw E;
     });
 },
 
-safelater = function (func, I) {
-    if ('function' === (typeof func)) {
-        later(func, I);
+safeCallback = function (task, data, cb) {
+    if ('function' !== (typeof cb)) {
+        return;
     }
+    later(function () {
+        try {
+            cb.apply(task, [data]);
+        } catch (E) {
+            if (task.throwError) {
+                laterThrow(E);
+            }
+        }
+    });
 },
 
 subtask = function (tasks) {
@@ -38,12 +51,10 @@ subtask = function (tasks) {
             if (count === all) {
                 executed = true;
                 while (callbacks.length) {
-                    safelater(callbacks.pop(), result);
+                    safeCallback(myself, result, callbacks.pop());
                 }
                 if (myself.errors.length && myself.throwError) {
-                    later(function () {
-                        throw myself.errors;
-                    });
+                    laterThrow(myself.errors);
                 }
             }
         };
@@ -59,15 +70,7 @@ subtask = function (tasks) {
 
         // executed, return cached result
         if (executed) {
-            try {
-                cb.apply(myself, [result]);
-            } catch (E) {
-                if (myself.throwError) {
-                    later(function () {
-                        throw E;
-                    });
-                }
-            }
+            safeCallback(this, result, cb);
             return this;
         }
 
