@@ -586,21 +586,15 @@ console.log(err);
                 c: ST(3).transform(function (R) {return R * 2;}),
                 d: ST().transform(function (R) {return R;})
             }).transform(function (R) {
-console.log('11111');
-console.log(R);
                 exec++;
-/*
                 assert.deepEqual({
                     a: 1,
                     b: 2,
                     c: 6,
                     d: undefined
                 }, R);
-*/
                 return R.c;
             }).execute(function (D) {
-console.log('?>?>?>?');
-console.log(D);
                 exec++;
                 assert.equal(6, D);
             });
