@@ -33,8 +33,8 @@ subtask = function (tasks) {
                 ender();
             });
         },
-        ender = function () {
-            count++;
+        ender = function (noPlus) {
+            count = count + (noPlus ? 0 : 1);
             if (count === all) {
                 executed = true;
                 while (callbacks.length) {
@@ -87,6 +87,8 @@ subtask = function (tasks) {
             return this;
         }
 
+        // plus one to prevent end check passed in loop
+        all++;
         // execute
         for (var I in tasks) {
             if (tasks.hasOwnProperty(I)) {
@@ -97,9 +99,13 @@ subtask = function (tasks) {
                 }
             }
         }
+        // minus one to restore
+        all--;
 
         if (all === 0) {
             callbacks.pop()(tasks);
+        } else {
+            ender(true);
         }
 
         return this;
