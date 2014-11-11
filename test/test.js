@@ -567,7 +567,7 @@ describe('subtask error handling', function () {
         });
     });
 
-    itNotIncludeNode8('should handle exception inside children tasks', function (done) {
+    it('should handle exception inside children tasks', function (done) {
         var domain = require('domain').create(),
             exec = 0;
 
