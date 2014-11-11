@@ -609,7 +609,6 @@ describe('subtask error handling', function () {
 
         domain.on('error', function () {
             err++;
-            domain.dispose();
         });
 
         domain.run(function () {
@@ -629,10 +628,11 @@ describe('subtask error handling', function () {
         });
 
         setTimeout(function () {
+            domain.dispose();
             assert.equal(4, exec);
             assert.equal(1, err);
             done();
-        }, 500);
+        }, 200);
     });
 
     it('should no exception when .quiet() called', function (done) {
