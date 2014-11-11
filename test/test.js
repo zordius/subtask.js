@@ -530,6 +530,7 @@ describe('subtask error handling', function () {
 
         domain.on('error', function (err) {
             // after task done, still throw original exception
+            domain.dispose();
             done();
         });
 
@@ -553,6 +554,7 @@ describe('subtask error handling', function () {
         domain.on('error', function (err) {
             // after task done, still throw original exception
             assert.equal(2, exec);
+            domain.dispose();
             done();
         });
 
@@ -574,6 +576,7 @@ describe('subtask error handling', function () {
         domain.on('error', function (err) {
             // after task done, still throw original exception
             assert.equal(2, exec);
+            domain.dispose();
             done();
         });
 
@@ -606,6 +609,7 @@ describe('subtask error handling', function () {
 
         domain.on('error', function () {
             err++;
+            domain.dispose();
         });
 
         domain.run(function () {
@@ -627,6 +631,29 @@ describe('subtask error handling', function () {
         setTimeout(function () {
             assert.equal(4, exec);
             assert.equal(1, err);
+            done();
+        }, 100);
+    });
+
+    it('should no exception when .quiet() called', function (done) {
+        var exec = 0;
+
+        ST({}).transform(function (R) {
+            exec++;
+            return R.ok;
+        }).quiet().execute(function (D) {
+            exec++;
+            D.a = D.b;
+        }).execute(function (D) {
+            exec++;
+            D.c = D.d;
+        }).execute(function (D) {
+            exec++;
+            D.e = D.f;
+        });
+
+        setTimeout(function () {
+            assert.equal(4, exec);
             done();
         }, 100);
     });
