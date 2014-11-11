@@ -18,24 +18,21 @@ safelater = function (func, I) {
 },
 
 subtask = function (tasks) {
-    var executed = false,
+    var myself = this,
+        executed = false,
         type = (typeof tasks),
         count = 0,
         all = 0,
         result = {},
         callbacks = [],
         runner = function (index, task) {
-            try {
-                task.execute(function (D) {
-                    result[index] = D;
-                    ender();
-                });
-            } catch (E) {
-                later(function () {
-                    result[index] = ('function' === (typeof task)) ? undefined : task;
-                    ender();
-                });
-            }
+            task.quiet().execute(function (D) {
+console.log('OKOK!!');
+console.log(D);
+console.log(result);
+                result[index] = D;
+                ender();
+            });
         },
         ender = function () {
             count++;
@@ -44,9 +41,16 @@ subtask = function (tasks) {
                 while (callbacks.length) {
                     safelater(callbacks.pop(), result);
                 }
+                if (myself.errors.length && !myself.silent) {
+                    later(function () {
+                        throw myself.errors[0];
+                    });
+                }
             }
         };
 
+    this.errors = [];
+    this.silent = false;
     this.execute = function (cb) {
         // do nothing when no subtask or input string
         if (!tasks || ('string' === type)) {
@@ -77,11 +81,9 @@ subtask = function (tasks) {
                     ender();
                 });
             } catch (E) {
+                this.errors.push(E);
                 result = undefined;
                 ender();
-                later(function () {
-                    throw (E);
-                });
             }
             return this;
         }
@@ -89,8 +91,12 @@ subtask = function (tasks) {
         // execute
         for (var I in tasks) {
             if (tasks.hasOwnProperty(I)) {
-                all++;
-                runner(I, tasks[I]);
+                if (SUBTASK.isSubtask(tasks[I])) {
+                    all++;
+                    runner(I, tasks[I]);
+                } else {
+                    result[I] = tasks[I];
+                }
             }
         }
 
@@ -158,6 +164,10 @@ SUBTASK.cache = function (tasks, key, timeout) {
 };
 
 subtask.prototype = {
+    quiet: function () {
+        this.silent = true;
+        return this;
+    },
     pipe: function (task) {
         var T = this;
 
@@ -170,25 +180,19 @@ subtask.prototype = {
         });
     },
     transform: function (func) {
-        var T = this;
-
-        return SUBTASK(function (cb) {
-            T.execute(function (D) {
-                var O,
-                    err = undefined;
-                try {
-                    O = func(D);
-                } catch (E) {
-                    err = E;
-                }
-                cb(O);
-                if (err) {
-                    later(function () {
-                        throw (err);
-                    });
-                }
+        var T = this,
+            newTask = SUBTASK(function (cb) {
+                T.execute(function (D) {
+                    var O;
+                    try {
+                        O = func(D);
+                    } catch (E) {
+                        newTask.errors.push(E);
+                    }
+                    cb(O);
+                });
             });
-        });
+        return newTask;
     },
     pick: function (path) {
         var T = this;

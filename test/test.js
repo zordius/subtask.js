@@ -543,12 +543,14 @@ describe('subtask error handling', function () {
         });
     });
 
-    it('should handle exception inside children tasks', function (done) {
+    itNotIncludeNode8('should handle exception inside children tasks', function (done) {
         var domain = require('domain').create(),
             exec = 0;
 
         domain.on('error', function (err) {
             // after task done, still throw original exception
+console.log('error~~~~~~~~ 3');
+console.log(err);
             assert.equal(2, exec);
             done();
         });
@@ -560,6 +562,8 @@ describe('subtask error handling', function () {
                 c: ST(3).transform(function (R) {return R * 2;}),
                 d: ST().transform(function (R) {return R.a.b;})
             }).transform(function (R) {
+console.log('11111');
+console.log(R);
                 exec++;
                 assert.deepEqual({
                     a: 1,
@@ -569,6 +573,8 @@ describe('subtask error handling', function () {
                 }, R);
                 return R.c;
             }).execute(function (D) {
+console.log('?>?>?>?');
+console.log(D);
                 exec++;
                 assert.equal(6, D);
             });
