@@ -210,7 +210,7 @@ var task1 = localCacheAPITask('http://abc'),
 * Error in an async task will be auto catched
 * Error in a .execute() callback will be catched
 * Error in a .transform() callback will be catched
-* All cached error will be throw later
+* All delayed error will be throw later, only once
 * To silently ignore these error , use .quiet()
 
 ```javascript
@@ -224,6 +224,16 @@ var errorTask = subtask({
 errorTask.execute(function (R) {
    // you will get {good: 'OK!', correct: 'Yes', badCallback: undefined} here
    // after this function, the delayed exception will be throw once
+}).execute(function (R) {
+   R.a.b.c = 10; // Error in .execute() callback will be delayed
+}).execute(function (R) {
+   // This callback function still works!
+   // the previous exception will be throw later.
+});
+
+anotherErrorTask.quiet().execute(function (R) {
+   // still safe, and now exception will be throw
+   // access stored exception from this.errors
 });
 ```
 
