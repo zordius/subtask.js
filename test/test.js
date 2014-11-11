@@ -234,6 +234,30 @@ describe('predefined async subtask', function () {
     });
 });
 
+describe('subtask.transform', function () {
+    it('should change results', function (done) {
+        ST({a:1, b:2}).transform(function (R) {
+            R.c = R.a + R.b;
+            return R;
+        }).execute(function (D) {
+            assert.deepEqual({a:1, b:2, c:3}, D);
+            done();
+        });
+    });
+
+    it('should work well after .execute()', function (done) {
+        ST({a:1, b:2}).execute(function (RR) {
+            // nothing...
+        }).transform(function (R) {
+            R.c = R.a + R.b;
+            return R;
+        }).execute(function (D) {
+            assert.deepEqual({a:1, b:2, c:3}, D);
+            done();
+        });
+    });
+});
+
 describe('subtask.pipe', function () {
     var queueTask = function (number) {
             return jobOne(number).pipe(jobTwo);
@@ -560,17 +584,19 @@ console.log(err);
                 a: 1,
                 b: ST(2),
                 c: ST(3).transform(function (R) {return R * 2;}),
-                d: ST().transform(function (R) {return R.a.b;})
+                d: ST().transform(function (R) {return R;})
             }).transform(function (R) {
 console.log('11111');
 console.log(R);
                 exec++;
+/*
                 assert.deepEqual({
                     a: 1,
                     b: 2,
                     c: 6,
                     d: undefined
                 }, R);
+*/
                 return R.c;
             }).execute(function (D) {
 console.log('?>?>?>?');
