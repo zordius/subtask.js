@@ -205,6 +205,28 @@ var task1 = localCacheAPITask('http://abc'),
     task5 = globalCacheAPITask('http://def'); // == task2 when you already task.initCache()
 ```
 
+**Error handling**
+
+* Error in an async task will be auto catched
+* Error in a .execute() callback will be catched
+* Error in a .transform() callback will be catched
+* All cached error will be throw later
+* To silently ignore these error , use .quiet()
+
+```javascript
+var errorTask = subtask({
+   good: 'OK!',
+   correct: subtask('Yes'),
+   badCallback: subtask().transform(function (D) {return D.a.b})
+                                    // TypeError: Cannot read property 'a' of undefined
+});
+
+errorTask.execute(function (R) {
+   // you will get {good: 'OK!', correct: 'Yes', badCallback: undefined} here
+   // after this function, the delayed exception will be throw once
+});
+```
+
 The Long Story
 --------------
 
