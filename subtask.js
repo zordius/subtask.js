@@ -26,10 +26,8 @@ subtask = function (tasks) {
         result = {},
         callbacks = [],
         runner = function (index, task) {
+            all++;
             task.quiet().execute(function (D) {
-console.log('OKOK!!');
-console.log(D);
-console.log(result);
                 result[index] = D;
                 ender();
             });
@@ -92,7 +90,6 @@ console.log(result);
         for (var I in tasks) {
             if (tasks.hasOwnProperty(I)) {
                 if (SUBTASK.isSubtask(tasks[I])) {
-                    all++;
                     runner(I, tasks[I]);
                 } else {
                     result[I] = tasks[I];
@@ -182,14 +179,8 @@ subtask.prototype = {
     transform: function (func) {
         var T = this,
             newTask = SUBTASK(function (cb) {
-                T.execute(function (D) {
-                    var O;
-                    try {
-                        O = func(D);
-                    } catch (E) {
-                        newTask.errors.push(E);
-                    }
-                    cb(O);
+                T.quiet().execute(function (D) {
+                    cb(func(D));
                 });
             });
         return newTask;
