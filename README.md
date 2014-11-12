@@ -10,10 +10,10 @@ Features
 
 * execute all child tasks in parallel
 * execute tasks sequentially, pipe previous output into next task
-* exception safe
-* cached the result naturally (single task cache)
-* global cached by user defined key (cross task cache)
-* local cached by user defined key
+* exception safe, auto delay exceptions after tasks done
+* cached the result naturally (single task result cache)
+* global cached by user defined key (per-process task cache)
+* cached by user defined key and storage (per-request or user managed task cache)
 
 **Why not..**
 
@@ -35,12 +35,14 @@ How to Use
 ```javascript
 var task = require('subtask'),
 
-// This is a task creator to do sync jobs
+// multiply is a task creator to do sync jobs
+// multiply(1, 2) is a created task instance
 multiply = function (a, b) {
     return task(a * b);
 };
 
-// This is a task creator to do async jobs
+// plus is a task creator to do async jobs
+// plus(3, 4) is a created task instance
 plus = function (a, b) {
     return task(function (cb) {
         mathApi.plus(a, b, function (value) {
@@ -52,7 +54,7 @@ plus = function (a, b) {
 
 **Execute task**
 
-* When you run `.execute()` the first time, subtask will run the inner logic in the task.
+* When you run `.execute()` the first time, subtask will run the inner logic inside the task.
 * When you run `.execute()` many times, subtask will return the result of first execution.
 * If the task is async, all `.execute()` will wait for first result. Subtask will ensure the inner logic is be executed only once.
 
@@ -87,18 +89,19 @@ plus(3, 5).execute(function (R) {
 var mathLogic = function (a, b) {
     return task({
         multiply: multiply(a, b),
-        plus: puls(a, b)
+        plus: puls(a, b),
+        minus: minus(a, b)
     });
 });
 
 mathLogic(9, 8).execute(function (R) {
-    // R will be {multiply: 72, plus: 17}
+    // R will be {multiply: 72, plus: 17, minus: 1}
 });
 ```
 
 **Pipe the tasks**
 
-* Use the result of a task as input of next task creator
+* Use the result of previous task as input of next task creator
 
 ```javascript
 var taskQueue = function (input) {
@@ -207,9 +210,9 @@ var task1 = localCacheAPITask('http://abc'),
 
 **Error handling**
 
-* Error in an async task will be auto catched
-* Error in a .execute() callback will be catched
-* Error in a .transform() callback will be catched
+* Error in an async task will be auto delayed
+* Error in a .execute() callback will be delayed
+* Error in a .transform() callback will be delayed
 * All delayed error will be throw later, only once
 * To silently ignore these error , use .quiet()
 

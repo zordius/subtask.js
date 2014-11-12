@@ -683,3 +683,27 @@ describe('subtask error handling', function () {
         });
     });
 });
+
+describe('subtask context api', function () {
+    it('this.errors should be accessiable in a transform function', function (done) {
+        ST().quiet().transform(function (R) {
+            assert.equal(0, this.errors.length);
+            return R.a.b;
+        }).transform(function (R) {
+            assert.equal(1, this.errors.length);
+        }).execute(function (D) {
+            assert.equal(undefined, D);
+            done();
+        });
+    });
+
+    it('this.errors should be accessiable in a execute callback', function (done) {
+        ST().quiet().transform(function (R) {
+            return R.a.b;
+        }).execute(function (D) {
+            assert.equal(1, this.errors.length);
+            assert.equal(undefined, D);
+            done();
+        });
+    });
+});
