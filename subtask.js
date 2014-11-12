@@ -106,7 +106,7 @@ subtask = function (tasks) {
         // wrap a hash and execute subtasks
         for (var I in tasks) {
             if (tasks.hasOwnProperty(I)) {
-                if (SUBTASK.isSubtask(tasks[I])) {
+                if (tasks[I] instanceof subtask) {
                     runner(I, tasks[I]);
                 } else {
                     result[I] = tasks[I];
