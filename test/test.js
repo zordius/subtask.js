@@ -709,6 +709,16 @@ describe('subtask error handling', function () {
 });
 
 describe('subtask context api', function () {
+    it('this.errors should be accessiable in subtask constructor', function (done) {
+        ST(function (cb) {
+            assert.equal(0, this.errors.length);
+            cb('OK!');
+        }).execute(function (D) {
+            assert.equal('OK!', D);
+            done();
+        });
+    });
+
     it('this.errors should be accessiable in a transform function', function (done) {
         ST().quiet().transform(function (R) {
             assert.equal(0, this.errors.length);

@@ -89,10 +89,10 @@ subtask = function (tasks) {
         if ('function' === type) {
             all = 1;
             try {
-                tasks(function (D) {
+                tasks.apply(this, [function (D) {
                     result = D;
                     ender();
-                });
+                }]);
             } catch (E) {
                 this.errors.push(E);
                 result = undefined;

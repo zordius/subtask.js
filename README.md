@@ -245,13 +245,16 @@ anotherErrorTask.quiet().execute(function (R) {
 **Good Practices**
 
 * Return `undefined` means error in a task.
+* Use `this.error(yourException)` to throw delayed exception for specific error information
 
 ```javascript
-myTask = function () {
+myTaskCreator = function () {
     return subtask(function (cb) {
+        var thisTask = this;
         doSomeAsyncApiCall(function (err, D) {
             // error handling
             if (err) {
+                thisTask.error(err);
                 return cb();
             }
             // .... all others....
@@ -262,7 +265,21 @@ myTask = function () {
 ```
 
 * Check input and output in your task creator.
+* Create a empty task when input error.
+
+```javascript
+myTaskCreator = function (a) {
+    // input validation
+    if (isNotValid(a)) {
+        return subtask();
+    }
+
+    // .... all others....
+    return subtask(....);
+};
+
 * Do not .quite() in your subtask modules
+
 The Long Story
 --------------
 
