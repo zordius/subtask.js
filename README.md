@@ -477,4 +477,4 @@ framework.defindPage('somePage', function (CX) {
 });
 ```
 
-<a "https://github.com/zordius/subtask.js">subtask</a> is created for this coding style.
+<a href="https://github.com/zordius/subtask.js">subtask</a> is created for this coding style.
