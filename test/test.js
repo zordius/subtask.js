@@ -714,6 +714,34 @@ describe('subtask error handling', function () {
             done();
         });
     });
+
+    it('should continue to the end when pipe into a bad transformed async task', function (done) {
+        var exec = 0;
+
+        ST(function (cb) {
+           exec++;
+           setTimeout(function () {
+               cb('OK');
+           }, 100);
+        }).pipe(function (D) {
+           exec++;
+           assert.equal('OK', D);
+           return ST(function (cb) {
+               setTimeout(function () {
+                   cb('YES');
+               }, 100);
+           }).transform(function (O) {
+               assert.equal('YES', O);
+               exec++;
+               D.a.b = O;
+               exec++;
+               cb('what?');
+           });
+        }).execute(function (R) {
+           assert.equal(3, exec);
+           done();
+        });
+    });
 });
 
 describe('subtask context api', function () {
