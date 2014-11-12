@@ -242,6 +242,27 @@ anotherErrorTask.quiet().execute(function (R) {
 });
 ```
 
+**Good Practices**
+
+* Return `undefined` means error in a task.
+
+```javascript
+myTask = function () {
+    return subtask(function (cb) {
+        doSomeAsyncApiCall(function (err, D) {
+            // error handling
+            if (err) {
+                return cb();
+            }
+            // .... all others....
+            cb(result);
+        });
+    });
+};
+```
+
+* Check input and output in your task creator.
+* Do not .quite() in your subtask modules
 The Long Story
 --------------
 

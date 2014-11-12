@@ -223,6 +223,9 @@ subtask.prototype = {
                 cb(jpp(D, path));
             }, cb);
         }).track(T);
+    },
+    error: function (E) {
+        this.errors.push(E);
     }
 };
 

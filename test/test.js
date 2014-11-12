@@ -730,4 +730,44 @@ describe('subtask context api', function () {
             done();
         });
     });
+
+    it('this.error() should add one delayed exception', function (done) {
+        ST().quiet().transform(function (R) {
+            this.error('NOT OK!');
+        }).execute(function (D) {
+            assert.equal(1, this.errors.length);
+            assert.equal('NOT OK!', this.errors[0]);
+            assert.equal(undefined, D);
+            done();
+        });
+    });
+
+    itNotIncludeNode8('this.error() should throw a delayed exception', function (done) {
+        var domain = require('domain').create(),
+            exec = 0,
+            err = 0;
+
+        domain.on('error', function (E) {
+            assert.equal('NOT OK!', E[0]);
+            err++;
+        });
+
+        domain.run(function () {
+            ST().transform(function () {
+                exec++;
+                this.error('NOT OK!');
+            }).execute(function () {
+                assert.equal(1, this.errors.length);
+                assert.equal('NOT OK!', this.errors[0]);
+                exec++;
+            });
+        });
+
+        setTimeout(function () {
+            domain.dispose();
+            assert.equal(2, exec);
+            assert.equal(1, err);
+            done();
+        }, 200);
+    });
 });
