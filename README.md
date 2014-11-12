@@ -265,7 +265,7 @@ myTaskCreator = function () {
 ```
 
 * Check input and output in your task creator.
-* Create a empty task when input error.
+* Create an empty task when input error.
 
 ```javascript
 myTaskCreator = function (a) {
