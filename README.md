@@ -8,28 +8,28 @@ A JavaScript class and design pattern to make async tasks clear and simple.
 Features
 --------
 
-* execute all child tasks in parallel
-* execute tasks sequentially, pipe previous output into next task
-* exception safe, auto delay exceptions after tasks done
-* cached the result naturally (per-task result cache)
-* global cached by user defined key (per-process task cache)
-* cached by user defined key and storage (per-request or user managed task cache)
+* Execute all child tasks in parallel.
+* Execute tasks sequentially, pipe previous output into next task.
+* Exception safe, auto delay exceptions after tasks done.
+* Cache the result naturally (per-task result cache) .
+* Cache by user defined key (per-process task cache) .
+* Cache by user defined key and storage (per-request or user managed task cache) .
 
-**Why not..**
+**Why not...**
 
-* Why not async.series? Because we need to handle task output as another task input, it make callback functions access variables in another scope and mess up everything.
-* Why not async.parallel? Because we like to put results with semantic naming under an object.
-* Why not extend async.\* ? Because we like all tasks can be defined and be executed in the same way... we need something like promise to ensure the interface is normalized.
-* Why not promise? Because we want to handle all success + failed cases in same place, promise.then() takes 2 callbacks.
-* Why not extend promise? Because the requirement is different, and we do not want to confuse developers.
+* Why not `async.series()`? Because we need to handle task output as another task input, it make callback functions access variables in another scope and mess up everything.
+* Why not `async.parallel()`? Because we like to put results with semantic naming under an object.
+* Why not extend `async.\*`? Because we like all tasks can be defined and be executed in the same way... we need something like promise to ensure the interface is normalized.
+* Why not promise? Because we want to handle all success + failed cases in same place, `promise.then()` takes 2 callbacks.
+* Why not extends `promise`? Because the requirement is different, and we do not want to confuse developers.
 
 How to Use
 ----------
 
 **Define task**
 
-* A task is created by `task creator` function, the function will take your input parameters then return the created task instance.
-* After the task be created, the final result should be always same because the input parameters were already put into the task.
+* A task is created by `task creator` function; the function will take your input parameters then return the created task instance.
+* After the task is created, the final result should be always same because the input parameters were already put into the task.
 * Therefore, the logic inside a task will be executed only once and the result is kept by subtask.
 
 ```javascript
@@ -81,8 +81,8 @@ plus(3, 5).execute(function (R) {
 **Parallel subtasks**
 
 * Use hash to define subtasks.
-* task.execute() will trigger all subtasks.execute() parallelly.
-* After all subtasks .execute() done , callback of task.execute() will be triggered.
+* `task.execute()` will trigger all subtasks.execute() in parallel.
+* After all subtasks .execute() done , callback of `task.execute()` will be triggered.
 * Results of all subtasks .execute() will be collected into the hash.
 
 ```javascript
@@ -138,11 +138,11 @@ task2(456).pick('story.0.title');
 
 **Global task cache**
 
-* Init app level cache with proper size
-* Define cache key when task created
+* Initialize process level cache with proper size.
+* Define cache key when creating a task.
 * Then do not need to worry about api|template|html|anything cache!
 * All tasks with same key will refer to same instance
-* Provide timeout as 3rd param when you want to expire it
+* Provide timeout as 3rd parameter when you want to expire it
 
 ```javascript
 // Init cache when app start
@@ -211,11 +211,11 @@ var task1 = localCacheAPITask('http://abc'),
 **Error handling**
 
 * Error in an async task will be auto delayed.
-* Error in a .execute() callback will be delayed.
-* Error in a .transform() callback will be delayed.
+* Error in a `.execute()` callback will be delayed.
+* Error in a `.transform()` callback will be delayed.
 * All delayed error will be throw later, only once.
 * If you pipe/transform/parallel execute tasks, all delayed error will be tracked by final/parent task.
-* To silently ignore these error , use .quiet()
+* To silently ignore these error, use .quiet()
 
 ```javascript
 var errorTask = subtask({
@@ -277,8 +277,10 @@ myTaskCreator = function (a) {
     // .... all others....
     return subtask(....);
 };
+```
 
-* Do not .quite() in your subtask modules
+* Do not `.quite()` in your subtask modules.
+* Use `.quite()` as late as you can.
 
 The Long Story
 --------------
@@ -324,7 +326,7 @@ var somePage = function (req, res) {
 
 **We should provide input for modules**
 
-But, how do we get the data? by the query param? We decide to make modules handle itself.
+But, how do we get the data? By the query parameters? We decide to make modules handle itself.
 
 ```javascript
 var somePage = function (req, res) {
@@ -345,7 +347,7 @@ var someModule = function (req) {
 * ISSUE 1: many small pieces of code do similar tasks for input.
 * ISSUE 2: the real life of a page is async.
 
-**Everything should be async**
+**Everything should be Async**
 
 Yes, it's our real life.
 
@@ -363,9 +365,9 @@ var somePage = function (req, res) {
 
 We can use <a href="https://www.google.com/search?q=javascript+promise">promise</a> to prevent callback hell.
 
-**Parellel is better**
+**Parallel is better**
 
-For performance, manybe we can get modules in parallel? For this we should change the interfaces of modules a bit, make then return a function.
+For performance, maybe we can get modules in parallel? For this we should change the interfaces of modules a bit, make then return a function.
 
 ```javascript
 var somePage = function (req, res) {
@@ -380,7 +382,7 @@ var somePage = function (req, res) {
 
 **Take care of Response**
 
-Maybe the getStoryModule wanna set cookie? So we should send req to all modules...
+Maybe the `getStoryModule` wanna set cookie? So we should send `req` to all modules...
 
 ```javascript
 var somePage = function (req, res) {
@@ -395,7 +397,7 @@ var somePage = function (req, res) {
 
 **Use one Object**
 
-Stop adding input param, we use one object to handle all requirements.
+Stop appending input parameters, we use one object to handle all requirements.
 
 ```javascript
 var somePage = function (req, res) {
@@ -415,7 +417,7 @@ var somePage = function (req, res) {
 
 **How about Title?**
 
-Hmmm...in most case, the title is story title. Do it....
+Hmmm...In most case, the title is story title. Do it....
 
 ```javascript
 var somePage = function (CX) {
@@ -429,11 +431,11 @@ var somePage = function (CX) {
     });
 ```
 
-Stop! R[0] to R[n] are bad! And, why we get the story two times? (one for the page title, another one for the story module) . Maybe we should reuse the fetched data and store it.
+Stop! `R[0]` to `R[n]` are bad! And, why we get the story two times? (one for the page title, another one for the story module) . Maybe we should reuse the fetched data and store it.
 
 **Namespace**
 
-We can store data in the context `CX`, and define good namespace rule. And we make a framework to handle modules and page. Now the code seens better:
+We can store data in the context `CX`, and define good namespace rule. And we make a framework to handle modules and page. Now the code seems better:
 
 ```javascript
 framework.defindPage('somePage', function (CX) {
@@ -452,9 +454,9 @@ framework.defindPage('somePage', function (CX) {
 
 Namespace rule is hard to maintain:
 
-* CX.data.stories: a list of stories. good for all pages.
-* CX.data.user.name: user name. good for all pages.
-* CX.module.story: story module....what happened when I put 2 story modules in 1 page?!!!
+* CX.data.stories: a list of stories. Good for all pages.
+* CX.data.user.name: user name. Good for all pages.
+* CX.module.story: story module...What happened when I put 2 story modules in 1 page?!!!
 
 We do not believe all developers in the team remember all naming rules.
 
