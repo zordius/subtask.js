@@ -782,7 +782,7 @@ describe('subtask context api', function () {
             this.error('NOT OK!');
         }).execute(function (D) {
             assert.equal(1, this.errors.length);
-            assert.equal('NOT OK!', this.errors[0]);
+            assert.equal('NOT OK!', this.errors[0].message);
             assert.equal(undefined, D);
             done();
         });
@@ -794,7 +794,7 @@ describe('subtask context api', function () {
             err = 0;
 
         domain.on('error', function (E) {
-            assert.equal('NOT OK!', E[0]);
+            assert.equal('NOT OK!', E[0].message);
             err++;
         });
 
@@ -804,7 +804,7 @@ describe('subtask context api', function () {
                 this.error('NOT OK!');
             }).execute(function () {
                 assert.equal(1, this.errors.length);
-                assert.equal('NOT OK!', this.errors[0]);
+                assert.equal('NOT OK!', this.errors[0].message);
                 exec++;
             });
         });
