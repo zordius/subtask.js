@@ -360,6 +360,14 @@ describe('subtask.pick', function () {
             done();
         });
     });
+
+    it('should be safe when pick from undefined', function (done) {
+        ST().pick('a.c')
+        .execute(function (D) {
+            assert.equal(undefined, D);
+            done();
+        });
+    });
 });
 
 describe('subtask.cache with extended taskPool', function () {
