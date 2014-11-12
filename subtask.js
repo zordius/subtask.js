@@ -15,16 +15,16 @@ laterThrow = function (E) {
     });
 },
 
-safeCallback = function (task, data, cb, cb2) {
-    if ('function' !== (typeof cb)) {
+safeCallback = function (task, data, cb) {
+    if ('function' !== (typeof cb[0])) {
         return;
     }
     later(function () {
         try {
-            cb.apply(task, [data]);
+            cb[0].apply(task, [data]);
         } catch (E) {
-            if (cb2 && cb2.apply) {
-                cb2.apply(task, []);
+            if (cb[1] && cb[1].apply) {
+                cb[1].apply(task, []);
             }
             if (task.throwError) {
                 laterThrow(E);
@@ -73,12 +73,12 @@ subtask = function (tasks) {
 
         // executed, return cached result
         if (executed) {
-            safeCallback(this, result, cb, cb2);
+            safeCallback(this, result, [cb, cb2]);
             return this;
         }
 
         // wait for result
-        callbacks.push(cb);
+        callbacks.push([cb, cb2]);
 
         // started, not again
         if (all) {
@@ -117,7 +117,7 @@ subtask = function (tasks) {
         all--;
 
         if (all === 0) {
-            callbacks.pop()(tasks);
+            callbacks.pop()[0](tasks);
         } else {
             ender(true);
         }
