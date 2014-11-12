@@ -30,7 +30,7 @@ How to Use
 
 * A task is created by `task creator` function, the function will take your input parameters then return the created task instance.
 * After the task be created, the final result should be always same because the input parameters were already put into the task.
-* Therefore, the logic inside a task will be executed only once and the result is keeped by subtask.
+* Therefore, the logic inside a task will be executed only once and the result is kept by subtask.
 
 ```javascript
 var task = require('subtask'),
