@@ -11,7 +11,7 @@ Features
 * execute all child tasks in parallel
 * execute tasks sequentially, pipe previous output into next task
 * exception safe, auto delay exceptions after tasks done
-* cached the result naturally (single task result cache)
+* cached the result naturally (per-task result cache)
 * global cached by user defined key (per-process task cache)
 * cached by user defined key and storage (per-request or user managed task cache)
 
@@ -132,10 +132,11 @@ task1(123)
 });
 
 // when .execute() we get the title of first story
-task2(456).pick('story.0.title')
+// Same with task2(456).transform(function (R) {return R.story[0].title});
+task2(456).pick('story.0.title');
 ```
 
-**Global Cached task**
+**Global task cache**
 
 * Init app level cache with proper size
 * Define cache key when task created
@@ -173,12 +174,11 @@ function getAPIResult() {
 }
 ```
 
-**Local Cached task**
+**User Managed task cache**
 
-* Extend subtask.cache
 * Set this.taskPool to a hash as cache storage
 * Set this.taskKey to extend cache key
-* You can enable both global task cache and local task cache in the same time
+* You can enable both global and your cache in the same time
 
 ```javascript
 var extendedCacheTask = {
@@ -210,10 +210,11 @@ var task1 = localCacheAPITask('http://abc'),
 
 **Error handling**
 
-* Error in an async task will be auto delayed
-* Error in a .execute() callback will be delayed
-* Error in a .transform() callback will be delayed
-* All delayed error will be throw later, only once
+* Error in an async task will be auto delayed.
+* Error in a .execute() callback will be delayed.
+* Error in a .transform() callback will be delayed.
+* All delayed error will be throw later, only once.
+* If you pipe/transform/parallel execute tasks, all delayed error will be tracked by final/parent task.
 * To silently ignore these error , use .quiet()
 
 ```javascript
@@ -231,11 +232,12 @@ errorTask.execute(function (R) {
    R.a.b.c = 10; // Error in .execute() callback will be delayed
 }).execute(function (R) {
    // This callback function still works!
-   // the previous exception will be throw later.
+   // the previous exceptions will be throw later.
 });
 
+// Use task.quiet() or task.throwError = false to stop all exception.
 anotherErrorTask.quiet().execute(function (R) {
-   // still safe, and now exception will be throw
+   // still safe, and now exception will not be throw
    // access stored exception from this.errors
 });
 ```
