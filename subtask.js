@@ -225,7 +225,7 @@ subtask.prototype = {
         }).track(T);
     },
     error: function (E) {
-        this.errors.push(E);
+        this.errors.push((E instanceof Error) ? E : new Error(E));
     }
 };
 
