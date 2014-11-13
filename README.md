@@ -461,7 +461,7 @@ We do not believe all developers in the team remember all naming rules.
 Stop using namespace, it is a 'global variable' solution under `CX`. We should use local variable.
 
 ```javascript
-framework.defindPage('somePage', function (CX) {
+framework.definePage('somePage', function (CX) {
     CX.executeJobs({
         title: CX.getData('storyTitle'),
         header: CX.getModule('header'),
