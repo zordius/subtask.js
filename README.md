@@ -39,7 +39,7 @@ var task = require('subtask'),
 // multiply(1, 2) is a created task instance
 multiply = function (a, b) {
     return task(a * b);
-};
+},
 
 // plus is a task creator to do async jobs
 // plus(3, 4) is a created task instance
@@ -66,11 +66,7 @@ multiply(3, 5).execute(function (R) {
 plus(4, 6).execute(function (R) {
     console.log('4 + 6 = ' + R);
 });
-```
 
-* the result will be cached by the task
-
-```javascript
 plus(3, 5).execute(function (R) {
     console.log('3 * 5 = ' + R);
 }).execute(function (R) {
@@ -139,10 +135,10 @@ task2(456).pick('story.0.title');
 **Global task cache**
 
 * Initialize process level cache with proper size.
-* Define cache key when creating a task.
+* Define cache key when creating a task with `subtask.cache()`.
 * Then do not need to worry about api|template|html|anything cache!
-* All tasks with same key will refer to same instance
-* Provide timeout as 3rd parameter when you want to expire it
+* All tasks with same key will refer to same instance.
+* Provide timeout as 3rd parameter when you want to expire it.
 
 ```javascript
 // Init cache when app start
