@@ -226,6 +226,7 @@ subtask.prototype = {
     },
     error: function (E) {
         this.errors.push((E instanceof Error) ? E : new Error(E));
+        return this;
     }
 };
 
