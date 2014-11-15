@@ -141,7 +141,23 @@ SUBTASK.initCache = function (size) {
     taskpool = new cache({maxSize: size});
 };
 
-SUBTASK.update = function (taskCreator, doFunc) {
+SUBTASK.before = function (taskCreator, doFunc) {
+    return function () {
+        var result = doFunc.apply(this, arguments);
+
+        if (result instanceof subtask) {
+            return result;
+        }
+
+        if (!result) {
+            return SUBTASK(result);
+        }
+
+        return taskCreator.apply(this. arguments) || SUBTASK();
+    };
+};
+
+SUBTASK.after = function (taskCreator, doFunc) {
     return function () {
         var task = taskCreator.apply(this, arguments) || SUBTASK();
         return doFunc.apply(this, [task, arguments]) || task;

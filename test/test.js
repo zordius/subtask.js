@@ -413,9 +413,18 @@ describe('subtask.cache with extended taskPool', function () {
     });
 });
 
-describe('subtask.update()', function () {
+describe('subtask.before()', function () {
+    it('should return a new task creator', function (done) {
+        var st = ST.before(function () {}, function () {});
+        assert.equal('function', typeof st);
+        assert.equal(true, ST.isSubtask(st()));
+        done();
+    });
+});
+
+describe('subtask.after()', function () {
     it('should return a new updated task creator', function (done) {
-        var st = ST.update(function () {}, function () {});
+        var st = ST.after(function () {}, function () {});
         assert.equal('function', typeof st);
         assert.equal(true, ST.isSubtask(st()));
         done();
@@ -427,7 +436,7 @@ describe('subtask.update()', function () {
             task.test ='OK!';
             return task;
         },
-        newTask = ST.update(originalTask, function (task) {
+        newTask = ST.after(originalTask, function (task) {
             // do nothing....
         });
 
@@ -443,7 +452,7 @@ describe('subtask.update()', function () {
             return ST(I*2);
         };
 
-        ST.update(originalTask, function (task) {
+        ST.after(originalTask, function (task) {
             // do nothing....
         })(3).execute(function (R) {
             assert.equal(6, R);
@@ -456,7 +465,7 @@ describe('subtask.update()', function () {
             return ST(I*2);
         };
 
-        ST.update(originalTask, function (task, args) {
+        ST.after(originalTask, function (task, args) {
             assert.equal(3, args[0]);
             done();
         })(3);
@@ -467,7 +476,7 @@ describe('subtask.update()', function () {
             return ST(I*2);
         };
 
-        ST.update(originalTask, function (task, args) {
+        ST.after(originalTask, function (task, args) {
             return task.transform(function (R) {
                 return R * 5;
             });
