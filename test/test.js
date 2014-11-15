@@ -450,6 +450,17 @@ describe('subtask.update()', function () {
             done();
         });
     });
+
+    it('should pass arguments into task updator', function (done) {
+        var originalTask = function (I) {
+            return ST(I*2);
+        };
+
+        ST.update(originalTask, function (task, args) {
+            assert.equal(3, args[0]);
+            done();
+        })(3);
+    });
 });
 
 describe('subtask.cache', function () {
