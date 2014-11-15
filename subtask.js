@@ -117,7 +117,7 @@ subtask = function (tasks) {
         all--;
 
         if (all === 0) {
-            callbacks.pop()[0](tasks);
+            callbacks.pop()[0].apply(this, [tasks]);
         } else {
             ender(true);
         }
@@ -141,7 +141,7 @@ SUBTASK.initCache = function (size) {
     taskpool = new cache({maxSize: size});
 };
 
-SUBTASK.append = function (taskCreator, doFunc) {
+SUBTASK.update = function (taskCreator, doFunc) {
     return function () {
         var task = taskCreator.apply(this, arguments) || SUBTASK();
         return doFunc.apply(this, [task, arguments]) || task;

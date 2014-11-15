@@ -112,6 +112,16 @@ describe('subtask.execute()', function () {
             done();
         });
     });
+
+    it('should access task self by `this`', function (done) {
+        var task = ST(1);
+
+        task.test = 'OK';
+        task.execute(function (R) {
+            assert.equal('OK', this.test);
+            done();
+        });
+    });
 });
 
 describe('predefined sync subtask', function () {
@@ -403,12 +413,29 @@ describe('subtask.cache with extended taskPool', function () {
     });
 });
 
-describe('subtask.append', function () {
-    it('should return a new task creator', function (done) {
-        var st = ST.append(function () {}, function () {});
+describe('subtask.update()', function () {
+    it('should return a new updated task creator', function (done) {
+        var st = ST.update(function () {}, function () {});
         assert.equal('function', typeof st);
         assert.equal(true, ST.isSubtask(st()));
         done();
+    });
+
+    it('should keep original task context', function (done) {
+        var originalTask = function () {
+            return ST(1);
+        },
+        newTask = ST.update(originalTask, function (task) {
+            return task;
+        }),
+        testTask = newTask();
+        testTask.test ='OK!';
+
+        testTask.execute(function (R) {
+            assert.equal(1, R);
+            assert.equal('OK!', this.test);
+            done();
+        });
     });
 });
 
