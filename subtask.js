@@ -141,6 +141,13 @@ SUBTASK.initCache = function (size) {
     taskpool = new cache({maxSize: size});
 };
 
+SUBTASK.append = function (taskCreator, doFunc) {
+    return function () {
+        var task = taskCreator.apply(this, arguments) || SUBTASK();
+        return doFunc.apply(this, [task, arguments]) || task;
+    };
+};
+
 SUBTASK.cache = function (tasks, key, timeout) {
     var T,
         thisPool = (this && this.taskPool) ? this.taskPool : false,

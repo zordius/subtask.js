@@ -12,12 +12,12 @@ describe('subtask', function () {
         done();
     });
 
-    it('should be an instance with execute()', function (done) {
+    it('should create a subtask with execute()', function (done) {
         assert.equal('function', typeof ST().execute);
         done();
     });
 
-    it('.isSubtask should return true/false', function (done) {
+    it('.isSubtask() should return true/false', function (done) {
         assert.equal(true, ST.isSubtask(ST(1)));
         assert.equal(false, ST.isSubtask(3));
         assert.equal(false, ST.isSubtask(function () {}));
@@ -25,36 +25,36 @@ describe('subtask', function () {
     });
 });
 
-describe('subtask.execute', function () {
-    it('should return undefined', function (done) {
+describe('subtask.execute()', function () {
+    it('should receive undefined when input undefined', function (done) {
         ST().execute(function (D) {
             assert.equal(undefined, D);
             done();
         });
     });
 
-    it('should return 0', function (done) {
+    it('should receive 0 when input 0', function (done) {
         ST(0).execute(function (D) {
             assert.equal(0, D);
             done();
         });
     });
 
-    it('should return 1', function (done) {
+    it('should receive 1 when input 1', function (done) {
         ST(1).execute(function (D) {
             assert.equal(1, D);
             done();
         });
     });
 
-    it('should return OK', function (done) {
+    it('should receive OK when input OK', function (done) {
         ST('OK').execute(function (D) {
             assert.equal('OK', D);
             done();
         });
     });
 
-    it('should return original hash', function (done) {
+    it('should receive original hash', function (done) {
         ST({a: 1, b: 0}).execute(function (D) {
             assert.deepEqual({a: 1, b: 0}, D);
             done();
@@ -399,6 +399,15 @@ describe('subtask.cache with extended taskPool', function () {
     it('should be different instance', function (done) {
         assert.equal(true, cachedTask(5).testinstance);
         assert.equal(undefined, cachedTask(7).testinstance);
+        done();
+    });
+});
+
+describe('subtask.append', function () {
+    it('should return a new task creator', function (done) {
+        var st = ST.append(function () {}, function () {});
+        assert.equal('function', typeof st);
+        assert.equal(true, ST.isSubtask(st()));
         done();
     });
 });
