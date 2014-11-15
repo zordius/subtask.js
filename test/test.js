@@ -420,6 +420,22 @@ describe('subtask.before()', function () {
         assert.equal(true, ST.isSubtask(st()));
         done();
     });
+
+    it('should keep original task context', function (done) {
+        var originalTask = function () {
+            var task = ST(1);
+            task.test ='OK';
+            return task;
+        },
+        newTask = ST.before(originalTask, function () {
+            // do nothing....
+        });
+
+        newTask().execute(function () {
+            assert.equal('OK', this.test);
+            done();
+        });
+    });
 });
 
 describe('subtask.after()', function () {

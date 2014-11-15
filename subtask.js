@@ -149,11 +149,11 @@ SUBTASK.before = function (taskCreator, doFunc) {
             return result;
         }
 
-        if (!result) {
+        if (result) {
             return SUBTASK(result);
         }
 
-        return taskCreator.apply(this. arguments) || SUBTASK();
+        return taskCreator.apply(this, arguments) || SUBTASK();
     };
 };
 
