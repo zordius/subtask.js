@@ -423,17 +423,30 @@ describe('subtask.update()', function () {
 
     it('should keep original task context', function (done) {
         var originalTask = function () {
-            return ST(1);
+            var task = ST(1);
+            task.test ='OK!';
+            return task;
         },
         newTask = ST.update(originalTask, function (task) {
-            return task;
-        }),
-        testTask = newTask();
-        testTask.test ='OK!';
+            // do nothing....
+        });
 
-        testTask.execute(function (R) {
+        newTask().execute(function (R) {
             assert.equal(1, R);
             assert.equal('OK!', this.test);
+            done();
+        });
+    });
+
+    it('should pass arguments into old task creator', function (done) {
+        var originalTask = function (I) {
+            return ST(I*2);
+        };
+
+        ST.update(originalTask, function (task) {
+            // do nothing....
+        })(3).execute(function (R) {
+            assert.equal(6, R);
             done();
         });
     });
