@@ -461,6 +461,21 @@ describe('subtask.update()', function () {
             done();
         })(3);
     });
+
+    it('should create updated task', function (done) {
+        var originalTask = function (I) {
+            return ST(I*2);
+        };
+
+        ST.update(originalTask, function (task, args) {
+            return task.transform(function (R) {
+                return R * 5;
+            });
+        })(3).execute(function (D) {
+            assert.equal(30, D);
+            done();
+        });
+    });
 });
 
 describe('subtask.cache', function () {
