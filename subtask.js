@@ -143,7 +143,8 @@ SUBTASK.initCache = function (size) {
 
 SUBTASK.before = function (taskCreator, doFunc) {
     return function () {
-        var result = doFunc.apply(this, arguments);
+        var args = Array.prototype.slice.call(arguments),
+            result = doFunc.apply(this, [taskCreator].concat(args));
 
         if (result instanceof subtask) {
             return result;
@@ -153,7 +154,7 @@ SUBTASK.before = function (taskCreator, doFunc) {
             return SUBTASK(result);
         }
 
-        return taskCreator.apply(this, arguments) || SUBTASK();
+        return taskCreator.apply(this, args) || SUBTASK();
     };
 };
 

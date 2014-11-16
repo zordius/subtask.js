@@ -436,6 +436,27 @@ describe('subtask.before()', function () {
             done();
         });
     });
+
+    it('should update task', function (done) {
+        var originalTask = function () {
+            var task = ST(1);
+            task.test ='OK';
+            return task;
+        },
+        newTask = ST.before(originalTask, function (task, I) {
+            if (I) {
+                return ST(I * 2);
+            }
+        });
+
+        newTask(0).execute(function (R) {
+            assert.equal(1, R);
+            newTask(1).execute(function (R) {
+                assert.equal(2, R);
+                done();
+            });
+        });
+    });
 });
 
 describe('subtask.after()', function () {
