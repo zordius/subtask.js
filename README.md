@@ -132,6 +132,31 @@ task1(123)
 task2(456).pick('story.0.title');
 ```
 
+**Modify Task Creator**
+
+* use subtask.after() to get a new task creator which updates the created task
+
+```javascript
+// getProduct is a task creator to call product api
+var getProduct = function (id) {
+   subtask(function (cb) {
+       if (!id) { // input validation
+           return cb();
+       }
+       request(apiUrl + id, function (err, res, body) {
+           cb(body);
+       });
+   });
+};
+
+// renderProduct is a task creator for getProduct + .pipe(renderTask)
+var renderProduct = subtask.after(getProduct, function (task) {
+   return task.pipe(renderTask);
+});
+```
+
+* use subtask.before() to do extra logic before you create the task
+
 **Global task cache**
 
 * Initialize process level cache with proper size.
