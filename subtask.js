@@ -54,7 +54,7 @@ subtask = function (tasks) {
             if (count === all) {
                 executed = true;
                 while (callbacks.length) {
-                    safeCallback(myself, result, callbacks.pop());
+                    safeCallback(myself, result, callbacks.shift());
                 }
                 if (myself.errors.length && myself.throwError) {
                     laterThrow(myself.errors);

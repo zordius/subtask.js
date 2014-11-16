@@ -53,4 +53,20 @@ describe('predefined asynchronize subtask', function () {
             done();
         });
     });
+
+    it('should .execute() by order', function (done) {
+        var exec = 0;
+
+        timeTask(3, 2).execute(function () {
+            exec++;
+            assert.equal(1, exec);
+        }).execute(function () {
+            exec++;
+            assert.equal(2, exec);
+        }).execute(function () {
+            exec++;
+            assert.equal(3, exec);
+            done();
+        });
+    });
 });
