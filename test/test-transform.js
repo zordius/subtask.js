@@ -3,29 +3,26 @@
 var assert = require('chai').assert,
     ST = require('../subtask.js');
 
-describe('subtask.execute() cache', function () {
-    var called = 0,
-        testTask = function (id) {
-            return ST(function (cb) {
-                setTimeout(function () {
-                    called++;
-                    cb(called);
-                }, 200);
-            });
-        };
-
-    it('should executed only 1 time', function (done) {
-        var T = testTask(1);
-
-        T.execute(function (D) {
-            assert.equal(1, D);
+describe('subtask.transform()', function () {
+    it('should change results', function (done) {
+        ST({a:1, b:2}).transform(function (R) {
+            R.c = R.a + R.b;
+            return R;
+        }).execute(function (D) {
+            assert.deepEqual({a:1, b:2, c:3}, D);
+            done();
         });
+    });
 
-        setTimeout(function () {
-            T.execute(function (D) {
-                assert.equal(1, D);
-                done();
-            });
-        }, 100);
+    it('should work well after .execute()', function (done) {
+        ST({a:1, b:2}).execute(function (RR) {
+            // nothing...
+        }).transform(function (R) {
+            R.c = R.a + R.b;
+            return R;
+        }).execute(function (D) {
+            assert.deepEqual({a:1, b:2, c:3}, D);
+            done();
+        });
     });
 });
