@@ -3,7 +3,7 @@
 var assert = require('chai').assert,
     ST = require('../subtask.js');
 
-describe('subtask.pipe', function () {
+describe('subtask.pipe()', function () {
     var queueTask = function (number) {
             return jobOne(number).pipe(jobTwo);
         },
@@ -65,7 +65,7 @@ describe('subtask.pipe', function () {
         });
     });
 
-    describe('subtask.transform', function () {
+    describe('subtask.transform()', function () {
         it('should transform task result by the function', function (done) {
             queueTask(1)
             .pipe(jobOne)

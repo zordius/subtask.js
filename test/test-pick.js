@@ -3,7 +3,7 @@
 var assert = require('chai').assert,
     ST = require('../subtask.js');
 
-describe('subtask.pick', function () {
+describe('subtask.pick()', function () {
     it('should get result by path', function (done) {
         ST({
             a: {
