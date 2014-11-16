@@ -27,7 +27,7 @@ describe('subtask.before()', function () {
         });
     });
 
-    it('should update task', function (done) {
+    it('should return task by return new task', function (done) {
         var originalTask = function () {
             var task = ST(1);
             task.test ='OK';
@@ -41,10 +41,29 @@ describe('subtask.before()', function () {
 
         newTask(0).execute(function (R) {
             assert.equal(1, R);
+            assert.equal('OK', this.test);
             newTask(1).execute(function (R) {
                 assert.equal(2, R);
+                assert.equal(undefined, this.test);
                 done();
             });
+        });
+    });
+
+    it('should create task by return values', function (done) {
+        var originalTask = function () {
+            var task = ST(1);
+            task.test ='OK';
+            return task;
+        },
+        newTask = ST.before(originalTask, function (task, I) {
+            return {a: 1, b: 2};
+        });
+
+        newTask(0).execute(function (R) {
+            assert.deepEqual({a: 1, b: 2}, R);
+            assert.equal(undefined, this.test);
+            done();
         });
     });
 });
