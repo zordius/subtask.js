@@ -1,10 +1,7 @@
 'use strict';
 
 var assert = require('chai').assert,
-    ST = require('../subtask.js'),
-    itNotIncludeNode8 = function (desc, cb) {
-        (process.version.match(/^v0.8/) ? it.skip : it)(desc, cb);
-    };
+    ST = require('../subtask.js');
 
 describe('subtask.execute cache', function () {
     var called = 0,
