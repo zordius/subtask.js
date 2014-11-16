@@ -139,7 +139,7 @@ task2(456).pick('story.0.title');
 ```javascript
 // getProduct is a task creator to call product api
 var getProduct = function (id) {
-   subtask(function (cb) {
+   return subtask(function (cb) {
        if (!id) { // input validation
            return cb();
        }
