@@ -2,8 +2,6 @@
 'use strict';
 
 var jpp = require('json-path-processor'),
-    cache = require('simple-lru-cache'),
-    taskpool = null,
 
 later = function (func) {
     process.nextTick(func);
@@ -134,13 +132,6 @@ SUBTASK.isSubtask = function (O) {
     return O instanceof subtask;
 };
 
-SUBTASK.initCache = function (size) {
-    if (taskpool) {
-        taskpool.reset();
-    }
-    taskpool = new cache({maxSize: size});
-};
-
 SUBTASK.before = function (taskCreator, doFunc) {
     return function () {
         var args = Array.prototype.slice.call(arguments),
@@ -163,46 +154,6 @@ SUBTASK.after = function (taskCreator, doFunc) {
         var task = taskCreator.apply(this, arguments) || SUBTASK();
         return doFunc.apply(this, [task, arguments]) || task;
     };
-};
-
-SUBTASK.cache = function (tasks, key, timeout) {
-    var T,
-        thisPool = (this && this.taskPool) ? this.taskPool : false,
-        thisKey = ((this && this.taskKey) ? this.taskKey : '') + key,
-        now;
-
-    if (timeout) {
-        now = (new Date()).getTime();
-    }
-
-    if (thisPool && thisPool[thisKey]) {
-        T = thisPool[thisKey];
-    }
-
-    if (taskpool) {
-        T = taskpool.get(thisKey);
-    }
-
-    if (timeout && T && ((T.taskTime + timeout) < now)) {
-        T = undefined;
-    }
-
-    if (!T) {
-        T = SUBTASK(tasks);
-    }
-
-    if (thisPool) {
-        thisPool[thisKey] = T;
-    }
-
-    if (taskpool) {
-        taskpool.set(thisKey, T);
-    }
-
-    T.taskKey = thisKey;
-    T.taskTime = now;
-
-    return T;
 };
 
 subtask.prototype = {

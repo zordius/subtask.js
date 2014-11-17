@@ -11,9 +11,7 @@ Features
 * Execute all child tasks in parallel.
 * Execute tasks sequentially, pipe previous output into next task.
 * Exception safe, auto delay exceptions after tasks done.
-* Cache the result naturally (per-task result cache) .
-* Cache by user defined key (per-process task cache) .
-* Cache by user defined key and storage (per-request or user managed task cache) .
+* Cache the result naturally.
 
 **Why not...**
 
@@ -157,76 +155,19 @@ var renderProduct = subtask.after(getProduct, function (task) {
 
 * use subtask.before() to do extra logic before you create the task
 
-**Global task cache**
-
-* Initialize process level cache with proper size.
-* Define cache key when creating a task with `subtask.cache()`.
-* Then do not need to worry about api|template|html|anything cache!
-* All tasks with same key will refer to same instance.
-* Provide timeout as 3rd parameter when you want to expire it.
-
 ```javascript
-// Init cache when app start
-task.initCache(1000);
+// An example to apply cache logic on task creator
+var cachedGetProduct = subtask.before(getProduct, function (task, id) {
+    var T = cache.get(id);
 
-// Define cache key when create task
-function getProudctById(id) {
-    return task.cache(function (cb) {
-        apiRequest(productApi + id, function (R) {
-            cb(R);
-        });
-    }, 'product-' + id); // define a unique key you like
-}
+    // not in cache...create and store.
+    if (!T) {
+        T = task(id);
+        cache.set(id, T);
+    }
 
-// example to render product id=10
-task({
-    title: getProductById(10).pick('title'),       // these 3 tasks refer to same instance
-    story: getProductById(10).pick('description'), // so you do not need to worry about
-    related: getProductById(10).pick('promotions') // multiple api calls in this case
-}).execute(function (R) {
-    // R = {title: .., , story: ... , related: ...}
+    return T;
 });
-
-// Cache API results in 5 minutes
-function getAPIResult() {
-    return task.cache(function (cb) {
-       ....
-    }, 'apicall', 300000);
-}
-```
-
-**User Managed task cache**
-
-* Set this.taskPool to a hash as cache storage
-* Set this.taskKey to extend cache key
-* You can enable both global and your cache in the same time
-
-```javascript
-var extendedCacheTask = {
-    create: function () {
-        return subtask.cache.apply(this, arguments);
-    },
-    taskPool: {},
-    taskKey: 'local_'
-},
-
-localCacheAPITask = function (url) {
-    return extendedCacheTask.create(function (cb) {
-        ....
-    }, 'api-' + url, 86400000);
-},
-
-globalCacheAPITask = function (url) {
-    return task.cache(function (cb) {
-        ....
-    }, 'api-' + url, 86400000);
-};
-
-var task1 = localCacheAPITask('http://abc'),
-    task2 = localCacheAPITask('http://def'), // !== task1
-    task3 = localCacheAPITask('http://abc'), // == task1
-    task4 = globalCacheAPITask('http://abc'), // !== task1 when you do not task.initCache()
-    task5 = globalCacheAPITask('http://def'); // == task2 when you already task.initCache()
 ```
 
 **Error handling**
