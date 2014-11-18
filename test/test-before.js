@@ -27,6 +27,22 @@ describe('subtask.before()', function () {
         });
     });
 
+    it('should use another task context', function (done) {
+        var originalTask = function () {
+            var task = ST(1);
+            task.test ='OK';
+            return task;
+        },
+        newTask = ST.before(originalTask, function () {
+            assert.equal('K~', this.test);
+        }, {test: 'K~'});
+
+        newTask.apply({test: 'O!'}).execute(function () {
+            assert.equal('OK', this.test);
+            done();
+        });
+    });
+
     it('should return task by return new task', function (done) {
         var originalTask = function () {
             var task = ST(1);
