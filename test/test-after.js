@@ -28,6 +28,23 @@ describe('subtask.after()', function () {
         });
     });
 
+    it('should change task context', function (done) {
+        var originalTask = function () {
+            var task = ST(1);
+            task.test ='OK!';
+            return task;
+        },
+        newTask = ST.after(originalTask, function (task) {
+            assert.equal('K~', this.Test);
+        }, {Test: 'K~'});
+
+        newTask.apply({Test: 'O!'}).execute(function (R) {
+            assert.equal(1, R);
+            assert.equal('OK!', this.test);
+            done();
+        });
+    });
+
     it('should pass arguments into old task creator', function (done) {
         var originalTask = function (I) {
             return ST(I*2);
