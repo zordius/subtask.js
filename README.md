@@ -157,12 +157,12 @@ var renderProduct = subtask.after(getProduct, function (task) {
 
 ```javascript
 // An example to apply cache logic on task creator
-var cachedGetProduct = subtask.before(getProduct, function (task, id) {
-    var T = cache.get(id);
+var cachedGetProduct = subtask.before(getProduct, function (task, args) {
+    var T = cache.get(args[0]);
 
     // not in cache...create and store.
     if (!T) {
-        T = task(id);
+        T = task.apply(this, args);
         cache.set(id, T);
     }
 
