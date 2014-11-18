@@ -18,10 +18,10 @@ describe('subtask.after()', function () {
             return task;
         },
         newTask = ST.after(originalTask, function (task) {
-            // do nothing....
+            assert.equal('O!', this.Test);
         });
 
-        newTask().execute(function (R) {
+        newTask.apply({Test: 'O!'}).execute(function (R) {
             assert.equal(1, R);
             assert.equal('OK!', this.test);
             done();
