@@ -33,9 +33,9 @@ describe('subtask.before()', function () {
             task.test ='OK';
             return task;
         },
-        newTask = ST.before(originalTask, function (task, I) {
-            if (I) {
-                return ST(I * 2);
+        newTask = ST.before(originalTask, function (task, args) {
+            if (args.length && args[0]) {
+                return ST(args[0] * 2);
             }
         });
 

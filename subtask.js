@@ -134,8 +134,7 @@ SUBTASK.isSubtask = function (O) {
 
 SUBTASK.before = function (taskCreator, doFunc) {
     return function () {
-        var args = Array.prototype.slice.call(arguments),
-            result = doFunc.apply(this, [taskCreator].concat(args));
+        var result = doFunc.apply(this, [taskCreator, arguments]);
 
         if (result instanceof subtask) {
             return result;
@@ -145,7 +144,7 @@ SUBTASK.before = function (taskCreator, doFunc) {
             return SUBTASK(result);
         }
 
-        return taskCreator.apply(this, args) || SUBTASK();
+        return taskCreator.apply(this, arguments) || SUBTASK();
     };
 };
 
