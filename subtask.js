@@ -183,11 +183,11 @@ subtask.prototype = {
     transform: function (func) {
         var T = this;
 
-        return SUBTASK(function (cb) {
+        return func ? SUBTASK(function (cb) {
             T.execute(function (D) {
                 cb(func.apply(T, [D]));
             }, cb);
-        }).track(T);
+        }).track(T) : this;
     },
     pick: function (path) {
         var T = this;

@@ -25,4 +25,25 @@ describe('subtask.transform()', function () {
             done();
         });
     });
+
+    it('should return new subtask', function (done) {
+        var task = ST(123);
+        task.test = 'OK';
+        task.transform(function (R) {
+            return R * 2;
+        }).execute(function (D) {
+            assert.equal(undefined, this.test);
+            assert.equal(246, D);
+            done();
+        });
+    });
+    it('should return original subtask when no input', function (done) {
+        var task = ST(123);
+        task.test = 'OK';
+        task.transform().execute(function (D) {
+            assert.equal('OK', this.test);
+            assert.equal(123, D);
+            done();
+        });
+    });
 });
