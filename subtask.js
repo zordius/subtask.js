@@ -132,9 +132,9 @@ SUBTASK.isSubtask = function (O) {
     return O instanceof subtask;
 };
 
-SUBTASK.before = function (taskCreator, doFunc) {
+SUBTASK.before = function (taskCreator, doFunc, This) {
     return function () {
-        var result = doFunc.apply(this, [taskCreator, arguments]);
+        var result = doFunc.apply(This || this, [taskCreator, arguments]);
 
         if (result instanceof subtask) {
             return result;
@@ -144,14 +144,14 @@ SUBTASK.before = function (taskCreator, doFunc) {
             return SUBTASK(result);
         }
 
-        return taskCreator.apply(this, arguments) || SUBTASK();
+        return taskCreator.apply(This || this, arguments) || SUBTASK();
     };
 };
 
-SUBTASK.after = function (taskCreator, doFunc) {
+SUBTASK.after = function (taskCreator, doFunc, This) {
     return function () {
-        var task = taskCreator.apply(this, arguments) || SUBTASK();
-        return doFunc.apply(this, [task, arguments]) || task;
+        var task = taskCreator.apply(This || this, arguments) || SUBTASK();
+        return doFunc.apply(This || this, [task, arguments]) || task;
     };
 };
 
