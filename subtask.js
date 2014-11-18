@@ -169,7 +169,7 @@ subtask.prototype = {
     pipe: function (task) {
         var T = this;
 
-        return SUBTASK(function (cb) {
+        return task ? SUBTASK(function (cb) {
             T.execute(function (D) {
                 var nextTask = task(D);
 
@@ -178,7 +178,7 @@ subtask.prototype = {
                     cb(R);
                 }, cb);
             });
-        }).track(T);
+        }).track(T) : this;
     },
     transform: function (func) {
         var T = this;

@@ -65,6 +65,16 @@ describe('subtask.pipe()', function () {
         });
     });
 
+    it('should return original task when input not a task', function (done) {
+        var task = ST(123);
+        task.OK = 'YES';
+
+        task.pipe().execute(function () {
+            assert.equal('YES', this.OK);
+            done();
+        });
+    });
+
     describe('subtask.transform()', function () {
         it('should transform task result by the function', function (done) {
             queueTask(1)
