@@ -18,14 +18,14 @@ describe('example: task input validation', function () {
         };
 
     it('should safe when no id', function (done) {
-        getProductByIdTask(0).execute(function (R) {
+        getProductByIdTask(0).then(function (R) {
             assert.equal(undefined, R);
             done();
         });
     });
 
     it('should works well when id ok', function (done) {
-        getProductByIdTask(3).execute(function (R) {
+        getProductByIdTask(3).then(function (R) {
             assert.deepEqual({
                 title: 'this is a mocked product',
                 id: 3
@@ -47,8 +47,8 @@ describe('example: task input validation', function () {
         it('task: get first searched product', function (done) {
             searchProductsTasks('test')
             .pick('list.0')
-            .pipe(getProductByIdTask)
-            .execute(function (D) {
+            .then(getProductByIdTask)
+            .then(function (D) {
                 assert.deepEqual({
                     title: 'this is a mocked product',
                     id: 1
@@ -60,8 +60,8 @@ describe('example: task input validation', function () {
         it('task: get 3rd searched product, not valid', function (done) {
             searchProductsTasks('test')
             .pick('list.2')
-            .pipe(getProductByIdTask)
-            .execute(function (D) {
+            .then(getProductByIdTask)
+            .then(function (D) {
                 assert.deepEqual(undefined, D);
                 done();
             });

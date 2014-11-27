@@ -13,7 +13,7 @@ describe('subtask.pick()', function () {
             'a.c': 'no'
         })
         .pick('a.c')
-        .execute(function (D) {
+        .then(function (D) {
             assert.equal('OK!', D);
             done();
         });
@@ -21,7 +21,7 @@ describe('subtask.pick()', function () {
 
     it('should be safe when pick from undefined', function (done) {
         ST().pick('a.c')
-        .execute(function (D) {
+        .then(function (D) {
             assert.equal(undefined, D);
             done();
         });
