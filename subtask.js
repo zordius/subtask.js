@@ -30,30 +30,13 @@ promise_all = function (tasks) {
 
 subtask = function (tasks) {
     var typeOf = typeof tasks,
-        P,
-        resolved = false,
-        rejected = false,
-        result;
+        P;
 
     switch (typeOf) {
     case 'object':
         P = promise_all(tasks);
         break;
     case 'function':
-        P = new promise(function (resolve, reject) {
-            if (resolved || rejected) {
-                return result;
-            }
-
-            tasks(function () {
-                result = arguments;
-                resolve.apply(null, result);
-            }, function (X) {
-                result = arguments;
-                reject.apply(null, result);
-            });
-        });
-        break;
     case 'array':
         P = new promise(tasks);
         break;
