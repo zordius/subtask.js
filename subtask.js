@@ -36,8 +36,12 @@ subtask = function (tasks) {
     case 'object':
         P = promise_all(tasks);
         break;
-    default:
+    case 'function':
+    case 'array':
         P = new promise(tasks);
+        break;
+    default:
+        P = promise.resolve(tasks);
     }
     this.then = P.then;
 },
