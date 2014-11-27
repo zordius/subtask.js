@@ -21,12 +21,12 @@ describe('predefined asynchronize subtask', function () {
         };
 
     it('should return a subtask', function (done) {
-        assert.equal('function', (typeof timeTask(0, 1).execute));
+        assert.equal('function', (typeof timeTask(0, 1).then));
         done();
     });
 
-    it('should executed correct', function (done) {
-        timeTask(0, 1).execute(function (D) {
+    it('should be correct', function (done) {
+        timeTask(0, 1).then(function (D) {
             assert.deepEqual({
                 start: 0,
                 end: 1,
@@ -36,8 +36,8 @@ describe('predefined asynchronize subtask', function () {
         });
     });
 
-    it('should executed correct with different input', function (done) {
-        timeTask(3, 2).execute(function (D) {
+    it('should then correct with different input', function (done) {
+        timeTask(3, 2).then(function (D) {
             assert.deepEqual({
                 start: 3,
                 end: 2,
@@ -47,23 +47,27 @@ describe('predefined asynchronize subtask', function () {
         });
     });
 
-    it('should cached naturally', function (done) {
-        timeTask(3, 2).execute().execute(function (D) {
+    it('should be cached naturally', function (done) {
+        var T = timeTask(3, 2);
+
+        T.then();
+        T.then(function (D) {
             // this increase coverage
             done();
         });
     });
 
-    it('should .execute() by order', function (done) {
-        var exec = 0;
+    it('should .then() by order', function (done) {
+        var exec = 0,
+            T = timeTask(3, 2);
 
-        timeTask(3, 2).execute(function () {
+        T.then(function () {
             exec++;
             assert.equal(1, exec);
-        }).execute(function () {
+        }).then(function () {
             exec++;
             assert.equal(2, exec);
-        }).execute(function () {
+        }).then(function () {
             exec++;
             assert.equal(3, exec);
             done();
