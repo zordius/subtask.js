@@ -1,25 +1,16 @@
 subtask.js
 ==========
 
-A JavaScript class and design pattern to make async tasks clear and simple.
+An extended promise.
 
 [![npm version](https://img.shields.io/npm/v/subtask.svg)](https://www.npmjs.org/package/subtask) [![Dependency Status](https://david-dm.org/zordius/subtask.js.png)](https://david-dm.org/zordius/subtask.js)  [![Build Status](https://travis-ci.org/zordius/subtask.js.svg?branch=master)](https://travis-ci.org/zordius/subtask.js) [![Test Coverage](https://codeclimate.com/github/zordius/subtask.js/badges/coverage.svg)](https://codeclimate.com/github/zordius/subtask.js) [![Code Climate](https://codeclimate.com/github/zordius/subtask.js/badges/gpa.svg)](https://codeclimate.com/github/zordius/subtask.js) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 
 Features
 --------
 
-* Execute all child tasks in parallel.
-* Execute tasks sequentially, pipe previous output into next task.
-* Exception safe, auto delay exceptions after tasks done.
+* .pick(path) to pick required data safely
+* create promise with object and executed with key/value
 * Cache the result naturally.
-
-**Why not...**
-
-* Why not `async.series()`? Because we need to handle task output as another task input, it make callback functions access variables in another scope and mess up everything.
-* Why not `async.parallel()`? Because we like to put results with semantic naming under an object.
-* Why not extend `async.*`? Because we like all tasks can be defined and be executed in the same way... we need something like promise to ensure the interface is normalized.
-* Why not promise? Because we want to handle all success + failed cases in same place, `promise.then()` takes 2 callbacks.
-* Why not extends `promise`? Because the requirement is different, and we do not want to confuse developers.
 
 How to Use
 ----------
@@ -42,9 +33,9 @@ multiply = function (a, b) {
 // plus is a task creator to do async jobs
 // plus(3, 4) is a created task instance
 plus = function (a, b) {
-    return task(function (cb) {
+    return task(function (resolve) {
         mathApi.plus(a, b, function (value) {
-            cb(value);
+            resolve(value);
         });
     });
 };
@@ -52,32 +43,33 @@ plus = function (a, b) {
 
 **Execute task**
 
-* When you run `.execute()` the first time, subtask will run the inner logic inside the task.
-* When you run `.execute()` many times, subtask will return the result of first execution.
-* If the task is async, all `.execute()` will wait for first result. Subtask will ensure the inner logic is be executed only once.
+* Use `.then()` promise api.
 
 ```javascript
-multiply(3, 5).execute(function (R) {
+multiply(3, 5).then(function (R) {
     console.log('3 * 5 = ' + R);
 });
 
-plus(4, 6).execute(function (R) {
+plus(4, 6).then(function (R) {
     console.log('4 + 6 = ' + R);
 });
 
-plus(3, 5).execute(function (R) {
+var P35 = plus(3, 5);
+
+P35.then(function (R) {
     console.log('3 * 5 = ' + R);
-}).execute(function (R) {
+});
+
+P35.then(function (R) {
     console.log('3 * 5 still = ' + R + ', mathApi.plus only be executed once');
 });
 ```
 
 **Parallel subtasks**
 
-* Use hash to define subtasks.
-* `task.execute()` will trigger all subtasks.execute() in parallel.
-* After all subtasks .execute() done , callback of `task.execute()` will be triggered.
-* Results of all subtasks .execute() will be collected into the hash.
+* Use object or array to define subtasks.
+* `task.then()` will trigger all subtasks.then() in parallel.
+* Results of all subtasks .then() will be collected back.
 
 ```javascript
 var mathLogic = function (a, b) {
@@ -88,7 +80,7 @@ var mathLogic = function (a, b) {
     });
 });
 
-mathLogic(9, 8).execute(function (R) {
+mathLogic(9, 8).then(function (R) {
     // R will be {multiply: 72, plus: 17, minus: 1}
 });
 ```

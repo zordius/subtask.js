@@ -9,8 +9,8 @@ describe('subtask', function () {
         done();
     });
 
-    it('should create a subtask with execute()', function (done) {
-        assert.equal('function', typeof ST().execute);
+    it('should create a subtask with then()', function (done) {
+        assert.equal('function', typeof ST().then);
         done();
     });
 

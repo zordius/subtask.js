@@ -2,130 +2,54 @@
 'use strict';
 
 var jpp = require('json-path-processor'),
+    promise = require('promise'),
 
-later = function (func) {
-    process.nextTick(func);
-},
+promise_all = function (tasks) {
+    var values = [],
+        keys = [],
+        I,
+        all = 0;
 
-laterThrow = function (E) {
-    later(function () {
-        throw E;
-    });
-},
-
-safeCallback = function (task, data, cb) {
-    if ('function' !== (typeof cb[0])) {
-        return;
-    }
-    later(function () {
-        try {
-            cb[0].apply(task, [data]);
-        } catch (E) {
-            if (cb[1] && cb[1].apply) {
-                cb[1].apply(task, []);
-            }
-            if (task.throwError) {
-                laterThrow(E);
-            }
+    for (I in tasks) {
+        if (tasks.hasOwnProperty(I)) {
+            all++;
+            values.push(tasks[I]);
+            keys.push(I);
         }
+    }
+    return promise.all(values).then(function (V) {
+        var ret = {};
+
+        for (I=0;I<all;I++) {
+            ret[keys[I]] = V[I];
+        }
+
+        return ret;
     });
 },
 
 subtask = function (tasks) {
-    var myself = this,
-        executed = false,
-        type = (typeof tasks),
-        count = 0,
-        all = 0,
-        result = {},
-        callbacks = [],
-        runner = function (index, task) {
-            all++;
-            task.errors = myself.errors;
-            task.quiet().execute(function (D) {
-                result[index] = D;
-                ender();
-            });
-        },
-        ender = function (noPlus) {
-            count = count + (noPlus ? 0 : 1);
-            if (count === all) {
-                executed = true;
-                while (callbacks.length) {
-                    safeCallback(myself, result, callbacks.shift());
-                }
-                if (myself.errors.length && myself.throwError) {
-                    laterThrow(myself.errors);
-                }
-            }
-        };
+    var typeOf = typeof tasks,
+        P;
 
-    this.errors = [];
-    this.throwError = true;
-    this.execute = function (cb, cb2) {
-        // do nothing when no subtask or input string
-        if (!tasks || ('string' === type)) {
-            cb(tasks);
-            return this;
-        }
-
-        // executed, return cached result
-        if (executed) {
-            safeCallback(this, result, [cb, cb2]);
-            return this;
-        }
-
-        // wait for result
-        callbacks.push([cb, cb2]);
-
-        // started, not again
-        if (all) {
-            return this;
-        }
-
-        // wrap a function
-        if ('function' === type) {
-            all = 1;
-            try {
-                tasks.apply(this, [function (D) {
-                    result = D;
-                    ender();
-                }]);
-            } catch (E) {
-                this.errors.push(E);
-                result = undefined;
-                ender();
-            }
-            return this;
-        }
-
-        // plus one to prevent end check passed in loop
-        all++;
-        // wrap a hash and execute subtasks
-        for (var I in tasks) {
-            if (tasks.hasOwnProperty(I)) {
-                if (tasks[I] instanceof subtask) {
-                    runner(I, tasks[I]);
-                } else {
-                    result[I] = tasks[I];
-                }
-            }
-        }
-        // minus one to restore
-        all--;
-
-        if (all === 0) {
-            callbacks.pop()[0].apply(this, [tasks]);
-        } else {
-            ender(true);
-        }
-
-        return this;
-    };
+    switch (typeOf) {
+    case 'object':
+        P = promise_all(tasks);
+        break;
+    default:
+        P = new promise(tasks);
+    }
+    this.then = P.then;
 },
 
 SUBTASK = function(tasks) {
     return new subtask(tasks);
+};
+
+subtask.prototype.pick = function (path) {
+    return this.then(function (O) {
+        return jpp(O, path);
+    });
 };
 
 SUBTASK.isSubtask = function (O) {
@@ -153,55 +77,6 @@ SUBTASK.after = function (taskCreator, doFunc, This) {
         var task = taskCreator.apply(This || this, arguments) || SUBTASK();
         return doFunc.apply(This || this, [task, arguments]) || task;
     };
-};
-
-subtask.prototype = {
-    quiet: function () {
-        this.throwError = false;
-        return this;
-    },
-    track: function (task) {
-        this.errors = task.errors;
-        this.throwError = task.throwError;
-        task.throwError = false;
-        return this;
-    },
-    pipe: function (task) {
-        var T = this;
-
-        return task ? SUBTASK(function (cb) {
-            T.execute(function (D) {
-                var nextTask = task(D);
-
-                T.track(nextTask);
-                nextTask.execute(function (R) {
-                    cb(R);
-                }, cb);
-            });
-        }).track(T) : this;
-    },
-    transform: function (func) {
-        var T = this;
-
-        return func ? SUBTASK(function (cb) {
-            T.execute(function (D) {
-                cb(func.apply(T, [D]));
-            }, cb);
-        }).track(T) : this;
-    },
-    pick: function (path) {
-        var T = this;
-
-        return SUBTASK(function (cb) {
-            T.execute(function (D) {
-                cb(jpp(D, path));
-            }, cb);
-        }).track(T);
-    },
-    error: function (E) {
-        this.errors.push((E instanceof Error) ? E : new Error(E));
-        return this;
-    }
 };
 
 module.exports = SUBTASK;
