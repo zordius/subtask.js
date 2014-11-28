@@ -21,7 +21,8 @@ describe('subtask.before()', function () {
             assert.equal('O!', this.test);
         });
 
-        newTask.apply({test: 'O!'}).execute(function () {
+        newTask.apply({test: 'O!'}).then(function () {
+console.log(this);
             assert.equal('OK', this.test);
             done();
         });
@@ -37,7 +38,7 @@ describe('subtask.before()', function () {
             assert.equal('K~', this.test);
         }, {test: 'K~'});
 
-        newTask.apply({test: 'O!'}).execute(function () {
+        newTask.apply({test: 'O!'}).then(function () {
             assert.equal('OK', this.test);
             done();
         });
@@ -55,10 +56,10 @@ describe('subtask.before()', function () {
             }
         });
 
-        newTask(0).execute(function (R) {
+        newTask(0).then(function (R) {
             assert.equal(1, R);
             assert.equal('OK', this.test);
-            newTask(1).execute(function (R) {
+            newTask(1).then(function (R) {
                 assert.equal(2, R);
                 assert.equal(undefined, this.test);
                 done();
@@ -76,7 +77,7 @@ describe('subtask.before()', function () {
             return {a: 1, b: 2};
         });
 
-        newTask(0).execute(function (R) {
+        newTask(0).then(function (R) {
             assert.deepEqual({a: 1, b: 2}, R);
             assert.equal(undefined, this.test);
             done();
