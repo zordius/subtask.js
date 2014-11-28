@@ -9,54 +9,42 @@ var assert = require('chai').assert,
 describe('subtask error handling', function () {
     it('should nothing bad when task created', function (done) {
         var badTask = function (id) {
-            return ST(function (cb) {
-                cb(id.a.b.c);
+            return ST(function (resolve) {
+                resolve(id.a.b.c);
             });
         };
         done();
     });
 
-    itNotIncludeNode8('should handle exception inside task when .execute()', function (done) {
-        var domain = require('domain').create();
-
-        domain.on('error', function (err) {
-            // after task done, still throw original exception
-            domain.dispose();
-            done();
-        });
-
-        domain.run(function () {
-            var badTask = function (id) {
-                return ST(function (cb) {
-                    cb(id.a.b.c);
-                });
-            };
-
-            badTask(123).execute(function (D) {
-                assert.equal(undefined, D);
+    it('should handle exception inside task', function (done) {
+        var badTask = function (id) {
+            return ST(function (cb) {
+                cb(id.a.b.c);
             });
+        };
+
+        badTask(123).then(function (D) {
+            assert.equal(undefined, D);
+        }, function (F) {
+            assert.equal(true, F instanceof Error);
+            done();
         });
     });
 
-    itNotIncludeNode8('should handle exception inside .transform()', function (done) {
-        var domain = require('domain').create(),
-            exec = 0;
+    it('should handle exception inside .then()', function (done) {
+        var exec = 0;
 
-        domain.on('error', function (err) {
-            // after task done, still throw original exception
+        ST().then(function (R) {
+            exec++;
+            return R.ok;
+        }).then(function (R) {
+            exec++;
+        }, function (E) {
+            error++;
+        }).then(null, function (E) {
             assert.equal(2, exec);
-            domain.dispose();
+            assert.equal(true, F instanceof Error);
             done();
-        });
-
-        domain.run(function () {
-            ST().transform(function (R) {
-                exec++;
-                return R.ok;
-            }).execute(function (D) {
-                exec++;
-                assert.equal(undefined, D);
-            });
         });
     });
 
