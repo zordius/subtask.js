@@ -17,6 +17,7 @@ promise_all = function (tasks) {
             keys.push(I);
         }
     }
+
     return promise.all(values).then(function (V) {
         var ret = {};
 
