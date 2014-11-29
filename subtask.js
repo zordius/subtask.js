@@ -77,11 +77,4 @@ SUBTASK.before = function (taskCreator, doFunc, This) {
     };
 };
 
-SUBTASK.after = function (taskCreator, doFunc, This) {
-    return function () {
-        var task = taskCreator.apply(This || this, arguments) || SUBTASK();
-        return doFunc.apply(This || this, [task, arguments]) || task;
-    };
-};
-
 module.exports = SUBTASK;

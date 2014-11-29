@@ -19,13 +19,11 @@ describe('subtask.before()', function () {
         },
         newTask = ST.before(originalTask, function () {
             assert.equal('O!', this.test);
-        });
+        }),
+        P = newTask.apply({test: 'O!'});
 
-        newTask.apply({test: 'O!'}).then(function () {
-console.log(this);
-            assert.equal('OK', this.test);
-            done();
-        });
+        assert.equal('OK', P.test);
+        done();
     });
 
     it('should use another task context', function (done) {
