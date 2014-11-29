@@ -90,129 +90,19 @@ mathLogic(9, 8).then(function (R) {
 
 ```javascript
 var taskQueue = function (input) {
-    return firstTask(input).pipe(secondTask).pipe(thirdTask);
-});
-
-taskQueue(123).execute(function (D) {
-    // get result1 from firstTask(123).execute()
-    // then get result2 from secondTask(result1).execute()
-    // then get D from thirdTask(result2).execute()
+    return firstTask(input).then(secondTask).then(thirdTask);
 });
 ```
 
-**Transform then pipe**
+**Transform results**
 
-* Use .transform() to change the task result or pick wanted value
 * Use .pick('path.to.value') to pick wanted value
 
 ```javascript
-task1(123)
-.transform(function (R) {
-    return R * 2;
-})
-.pipe(task2)   // take result * 2 of task1 , send into task2 as input
-.pipe(task3)   // take result of task2 , send into task3
-.execute(function (D) {
-    // now D is result of task3
-});
-
-// when .execute() we get the title of first story
-// Same with task2(456).transform(function (R) {return R.story[0].title});
+// when get the title of first story
+// Same with task2(456).then(function (R) {return R.story[0].title});
 task2(456).pick('story.0.title');
 ```
-
-**Modify Task Creator**
-
-* use subtask.before() to do extra logic before you create the task
-
-```javascript
-// An example to apply cache logic on task creator
-var cachedGetProduct = subtask.before(getProduct, function (task, args) {
-    var T = cache.get(args[0]);
-
-    // not in cache...create and store.
-    if (!T) {
-        T = task.apply(this, args);
-        cache.set(id, T);
-    }
-
-    return T;
-});
-```
-
-**Error handling**
-
-* Error in an async task will be auto delayed.
-* Error in a `.execute()` callback will be delayed.
-* Error in a `.transform()` callback will be delayed.
-* All delayed error will be throw later, only once.
-* If you pipe/transform/parallel execute tasks, all delayed error will be tracked by final/parent task.
-* To silently ignore these error, use .quiet()
-
-```javascript
-var errorTask = subtask({
-   good: 'OK!',
-   correct: subtask('Yes'),
-   badCallback: subtask().transform(function (D) {return D.a.b})
-                                    // TypeError: Cannot read property 'a' of undefined
-});
-
-errorTask.execute(function (R) {
-   // you will get {good: 'OK!', correct: 'Yes', badCallback: undefined} here
-   // after this function, the delayed exception will be throw once
-}).execute(function (R) {
-   R.a.b.c = 10; // Error in .execute() callback will be delayed
-}).execute(function (R) {
-   // This callback function still works!
-   // the previous exceptions will be throw later.
-});
-
-// Use task.quiet() or task.throwError = false to stop all exception.
-anotherErrorTask.quiet().execute(function (R) {
-   // still safe, and now exception will not be throw
-   // access stored exception from this.errors
-});
-```
-
-**Good Practices**
-
-* Return `undefined` means error in a task.
-* Use `this.error(yourException)` to throw delayed exception for specific error information
-
-```javascript
-myTaskCreator = function () {
-    return subtask(function (cb) {
-        var thisTask = this;
-        doSomeAsyncApiCall(function (err, D) {
-            // error handling
-            if (err) {
-                thisTask.error(err);
-                return cb();
-            }
-            // .... all others....
-            cb(result);
-        });
-    });
-};
-```
-
-* Check input and output in your task creator.
-* Create an empty task when input error.
-
-```javascript
-myTaskCreator = function (a) {
-    // input validation
-    if (isNotValid(a)) {
-        return subtask();
-    }
-
-    // .... all others....
-    return subtask(....);
-};
-```
-
-* Do not `.quite()` in your subtask modules.
-* Use `.quite()` as late as you can.
 
 The Long Story
 --------------
