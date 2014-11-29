@@ -61,20 +61,4 @@ SUBTASK.isSubtask = function (O) {
     return O instanceof subtask;
 };
 
-SUBTASK.before = function (taskCreator, doFunc, This) {
-    return function () {
-        var result = doFunc.apply(This || this, [taskCreator, arguments]);
-
-        if (result instanceof subtask) {
-            return result;
-        }
-
-        if (result) {
-            return SUBTASK(result);
-        }
-
-        return taskCreator.apply(This || this, arguments) || SUBTASK();
-    };
-};
-
 module.exports = SUBTASK;
