@@ -11,14 +11,14 @@ Features
 * .pick(path) to pick required data safely
 * create promise with object and executed with key/value
 
+** Now subtask.js is built on top of promise and changed a lot from old version. If you wanna check old API, please check <a href="https://github.com/zordius/subtask.js/tree/none_promise_subtask">another branch</a>.
+
 How to Use
 ----------
 
 **Define task**
 
-* A task is created by `task creator` function; the function will take your input parameters then return the created task instance.
-* After the task is created, the final result should be always same because the input parameters were already put into the task.
-* Therefore, the logic inside a task will be executed only once and the result is kept by subtask.
+* A task is created by `task creator` function; the function will take your input parameters then return the created task instance (also a promise).
 
 ```javascript
 var task = require('subtask'),
